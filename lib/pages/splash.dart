@@ -19,9 +19,6 @@ class _SplashState extends State<Splash> {
     return new MaterialApp(
       title: 'Splash',
       home: new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Splash'),
-        ),
         body: new Center(
           child: new Text('Splash ${_count}'),
         ),
@@ -53,6 +50,6 @@ class _SplashState extends State<Splash> {
   }
 
   void _goToIndex() {
-    NavigatorHelper.redirect(context, "/pages/index/index");
+    NavigatorHelper.redirect(context, "/pages/home/home");
   }
 }

@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class Index extends StatefulWidget {
+class Cart extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new _IndexState();
+    return new _CartState();
   }
 }
 
-class _IndexState extends State<Index> {
+class _CartState extends State<Cart> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Index',
+      title: 'Cart',
       home: new Scaffold(
         appBar: new AppBar(
-          title: new Text('小橙优品'),
+          title: new Text('购物车'),
           backgroundColor: Color.fromRGBO(255, 126, 26, 1),
         ),
         body: new Center(
-          child: new Text('Index'),
+          child: new Text('Cart'),
         ),
       ),
     );

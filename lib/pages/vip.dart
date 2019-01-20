@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class Index extends StatefulWidget {
+class Vip extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new _IndexState();
+    return new _VipState();
   }
 }
 
-class _IndexState extends State<Index> {
+class _VipState extends State<Vip> {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Index',
+      title: 'BecomeDistributor',
       home: new Scaffold(
         appBar: new AppBar(
-          title: new Text('小橙优品'),
+          title: new Text('VIP'),
           backgroundColor: Color.fromRGBO(255, 126, 26, 1),
         ),
         body: new Center(
-          child: new Text('Index'),
+          child: new Text('BecomeDistributor'),
         ),
       ),
     );
