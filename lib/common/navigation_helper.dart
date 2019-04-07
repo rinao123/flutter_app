@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_app/pages/home.dart';
 import 'package:flutter_app/pages/index.dart';
 
-class NavigatorHelper {
+class NavigationHelper {
   static _getPage(path) {
     switch(path){
       case "/pages/home/home":
