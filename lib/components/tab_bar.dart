@@ -4,14 +4,25 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/configs/config.dart";
 
 class BottomTabBar extends StatefulWidget {
+    Function _onTap;
+
+    BottomTabBar({Function onTap}) {
+        this._onTap = onTap;
+    }
+
     @override
     State<StatefulWidget> createState() {
-        return new _BottomTabBarState();
+        return new _BottomTabBarState(onTap: this._onTap);
     }
 }
 
 class _BottomTabBarState extends State<BottomTabBar> {
     int _curIndex = 0;
+    Function _onTap;
+
+    _BottomTabBarState({Function onTap}) {
+        this._onTap = onTap;
+    }
 
     @override
     Widget build(BuildContext context) {
@@ -37,23 +48,38 @@ class _BottomTabBarState extends State<BottomTabBar> {
 
     Widget _buildItem(int index, Map<String, String> item) {
         return Expanded(
-            child: Center(
-                child: Stack(
-                    alignment: AlignmentDirectional.topCenter,
-                    children: <Widget>[
-                        Image(
-                            image: index == this._curIndex ? AssetImage(item["selectedIconPath"]) : AssetImage(item["iconPath"]),
-                            width: Utils.px2dp(64),
-                            height: Utils.px2dp(64)
-                        ),
-                        Column(
-                            children: <Widget>[
-                                Padding(padding: EdgeInsets.only(top: Utils.px2dp(66))),
-                                this._buildTitle(index, item)
-                            ]
-                        )
-                    ],
-                )
+            child: GestureDetector(
+                child: Center(
+                    child: Stack(
+                        alignment: AlignmentDirectional.topCenter,
+                        children: <Widget>[
+                            Column(
+                                children: <Widget>[
+                                    Padding(padding: EdgeInsets.only(top: Utils.px2dp(8))),
+                                    Image(
+                                        image: index == this._curIndex ? AssetImage(item["selectedIconPath"]) : AssetImage(item["iconPath"]),
+                                        width: Utils.px2dp(64),
+                                        height: Utils.px2dp(64)
+                                    )
+                                ]
+                            ),
+                            Column(
+                                children: <Widget>[
+                                    Padding(padding: EdgeInsets.only(top: Utils.px2dp(66))),
+                                    this._buildTitle(index, item)
+                                ]
+                            )
+                        ],
+                    )
+                ),
+                onTap: () {
+                    this.setState(() {
+                        this._curIndex = index;
+                        if (this._onTap != null) {
+                            this._onTap(index);
+                        }
+                    });
+                },
             ),
             flex: 1
         );
@@ -74,7 +100,7 @@ class _BottomTabBarState extends State<BottomTabBar> {
             style: TextStyle(
                 fontSize: Utils.px2dp(20),
                 color: Utils.getColorFromHex(Config.TAB_BAR["color"]),
-                height: Utils.px2dp(1.4)
+                height: 1
             )
         );
     }
@@ -87,7 +113,7 @@ class _BottomTabBarState extends State<BottomTabBar> {
                 fontSize: Utils.px2dp(20),
                 color: Utils.getColorFromHex(Config.TAB_BAR["selectedColor"]),
                 fontWeight: FontWeight.bold,
-                    height: Utils.px2dp(1.4)
+                    height: 1
             )
         );
     }

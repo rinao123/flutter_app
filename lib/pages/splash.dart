@@ -2,6 +2,7 @@ import "dart:async";
 import "dart:ui";
 
 import "package:flutter/material.dart";
+import 'package:flutter/services.dart';
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/navigation_helper.dart";
 import "package:flutter_app/common/utils.dart";
@@ -20,6 +21,8 @@ class _SplashState extends State<Splash> {
 
     @override
     Widget build(BuildContext context) {
+        SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarIconBrightness: Brightness.dark);
+        SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
         return Scaffold(
             body: Column(
                 children: <Widget>[

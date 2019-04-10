@@ -21,7 +21,11 @@ class _HomeState extends State<Home> {
                     Text("Home")
                 ]
             ),
-            bottomNavigationBar: new BottomTabBar()
+            bottomNavigationBar: new BottomTabBar(
+                onTap: (index) {
+                    print(index);
+                }
+                )
         );
     }
 }
