@@ -36,6 +36,7 @@ class _LayoutState extends State<Layout> {
 			return Scaffold(
 				appBar: AppBar(
 					backgroundColor: Utils.getColorFromHex("#ffffff"),
+					brightness: Brightness.light,
 				),
 				body: new PageStatus()
 			);
