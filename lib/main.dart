@@ -4,9 +4,9 @@ import "package:flutter_app/pages/splash.dart";
 import "package:flutter_app/configs/config.dart";
 
 void main() {
+    runApp(App());
     SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarIconBrightness: Brightness.light);
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
-    runApp(App());
 }
 
 class App extends StatelessWidget {

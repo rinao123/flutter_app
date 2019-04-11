@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
-import "package:flutter_app/components/tab_bar.dart";
+import "package:flutter_app/configs/config.dart";
+import "package:flutter_app/common/utils.dart";
+import "package:flutter_app/common//navigation_helper.dart";
 
 class Home extends StatefulWidget {
     @override
@@ -10,22 +12,65 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+    int _curIndex = 0;
+    List<Widget> _pages = [];
+
+    _HomeState() {
+        this._pages = [];
+        for (Map<String, String> item in Config.TAB_BAR["list"]) {
+            Widget page = NavigationHelper.getPage(item["pagePath"]);
+            this._pages.add(page);
+        }
+    }
+
     @override
     Widget build(BuildContext context) {
         return Scaffold(
-            appBar: AppBar(
-                title: Text("Home"),
+            body: this._pages[this._curIndex],
+            bottomNavigationBar: this._buildBottomNavigationBar()
+        );
+    }
+
+    Widget _buildBottomNavigationBar() {
+        return BottomNavigationBar(
+			type: BottomNavigationBarType.fixed,
+            items: this._buildBottomNavigationBarItems(),
+            onTap: (index) {
+                this.setState(() {
+                   this._curIndex = index;
+                });
+            },
+        );
+    }
+
+    List<BottomNavigationBarItem> _buildBottomNavigationBarItems() {
+        List<BottomNavigationBarItem> items = [];
+        for (int i = 0; i < Config.TAB_BAR["list"].length; i++) {
+            BottomNavigationBarItem item = this._buildBottomNavigationBarItem(i, Config.TAB_BAR["list"][i]);
+            items.add(item);
+        }
+        return items;
+    }
+
+    BottomNavigationBarItem _buildBottomNavigationBarItem(index, item) {
+        String iconPath = index == this._curIndex ? item["selectedIconPath"] : item["iconPath"];
+        Color color = Utils.getColorFromHex(index == this._curIndex ? Config.TAB_BAR["selectedColor"] : Config.TAB_BAR["color"]);
+        FontWeight fontWeight = index == this._curIndex ? FontWeight.bold : FontWeight.normal;
+        return BottomNavigationBarItem(
+            icon: Image(
+                image: AssetImage(iconPath),
+                width: Utils.px2dp(64),
+                height: Utils.px2dp(64)
             ),
-            body: Column(
-                children: <Widget>[
-                    Text("Home")
-                ]
-            ),
-            bottomNavigationBar: new BottomTabBar(
-                onTap: (index) {
-                    print(index);
-                }
+            title: Text(
+                item["text"],
+                style: TextStyle(
+                    fontSize: Utils.px2dp(20),
+                    color: color,
+                    fontWeight: fontWeight
                 )
+            )
         );
     }
 }

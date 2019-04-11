@@ -1,17 +1,20 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
-import "package:flutter_app/components/layout.dart";
 
-class Index extends StatefulWidget {
+class PageStatus extends StatefulWidget {
+
 	@override
 	State<StatefulWidget> createState() {
-		return new _IndexState();
+		return new _PageStatusState();
 	}
 }
 
-class _IndexState extends State<Index> {
+class _PageStatusState extends State<PageStatus> {
+
 	@override
 	Widget build(BuildContext context) {
-		return new Layout("index");
+		return Center(
+			child: Text("正在加载中")
+		);
 	}
 }
