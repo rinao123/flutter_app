@@ -9,25 +9,25 @@ class Config {
         "selectedColor": "#C3AE8D",
         "list": [
             {
-                "pagePath": "pages/index/index",
+                "pagePath": "/pages/index/index",
                 "text": "首页",
                 "iconPath": "assets/images/index.png",
                 "selectedIconPath": "assets/images/index_selected.png"
             },
             {
-                "pagePath": "pages/member/member",
+                "pagePath": "/pages/member/member",
                 "text": "会员中心",
                 "iconPath": "assets/images/member.png",
                 "selectedIconPath": "assets/images/member_selected.png"
             },
             {
-                "pagePath": "pages/cart/cart",
-                "text": "购物车",
+                "pagePath": "/pages/cart/cart",
+                "text": "购物袋",
                 "iconPath": "assets/images/cart.png",
                 "selectedIconPath": "assets/images/cart_selected.png"
             },
             {
-                "pagePath": "pages/myinfo/myinfo",
+                "pagePath": "/pages/myinfo/myinfo",
                 "text": "我的",
                 "iconPath": "assets/images/myinfo.png",
                 "selectedIconPath": "assets/images/myinfo_selected.png"

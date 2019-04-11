@@ -13,7 +13,12 @@ class _MemberState extends State<Member> {
 	Widget build(BuildContext context) {
 		return Scaffold(
 			appBar: AppBar(
-				title: Text("Member"),
+				backgroundColor: Colors.white,
+				brightness: Brightness.light,
+				title: Text(
+						"会员中心",
+						style: TextStyle(color: Colors.black)
+				),
 			),
 			body: Column(
 				children: <Widget>[

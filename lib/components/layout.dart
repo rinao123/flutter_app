@@ -27,8 +27,13 @@ class _LayoutState extends State<Layout> {
 
 	_LayoutState(String code) {
 		this._code = code;
-		this.getLayouts();
 	}
+
+	@override
+  void initState() {
+    super.initState();
+		this.getLayouts();
+  }
 
 	@override
 	Widget build(BuildContext context) {
@@ -37,6 +42,7 @@ class _LayoutState extends State<Layout> {
 				appBar: AppBar(
 					backgroundColor: Utils.getColorFromHex("#ffffff"),
 					brightness: Brightness.light,
+          iconTheme: IconThemeData(color: Colors.white)
 				),
 				body: new PageStatus()
 			);
@@ -45,6 +51,7 @@ class _LayoutState extends State<Layout> {
 			appBar: AppBar(
 				backgroundColor: Utils.getColorFromHex(this._layoutModel.backgroundColor),
 				brightness: Brightness.light,
+				iconTheme: IconThemeData(color: Colors.black),
 				title: Text(
 					this._layoutModel.title,
 					style: TextStyle(color: Utils.getColorFromHex(this._layoutModel.frontColor))
