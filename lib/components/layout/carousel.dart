@@ -108,7 +108,6 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors {
 
 	void getAdList() async {
 		List<Advice> advices = await SiteController.getAdList(this._carouselModel.code);
-		print(advices);
 		this.setState(() => this._advices = advices);
 	}
 }

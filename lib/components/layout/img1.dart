@@ -25,15 +25,15 @@ class _Img1State extends State<Img1> with LayoutBehaviors {
 		return Row(
 			crossAxisAlignment: CrossAxisAlignment.center,
 			children: <Widget>[
-				new GestureDetector(
-					child: Image(
-						image: new NetworkImage(this._img1Model.img),
-						width: Utils.px2dp(this._img1Model.width),
-						height: Utils.px2dp(this._img1Model.height),
-					),
-					onTap: () {
-						this.onTap(context, this._img1Model);
-					}
+				Ink.image(
+					image: NetworkImage(this._img1Model.img),
+					width: Utils.px2dp(this._img1Model.width),
+					height: Utils.px2dp(this._img1Model.height),
+					child: InkWell (
+						onTap: () {
+							this.onTap(context, this._img1Model);
+						}
+					)
 				)
 			],
 		);

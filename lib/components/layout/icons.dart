@@ -54,7 +54,7 @@ class _IconsState extends State<Icons> with LayoutBehaviors {
 		return Container(
 			width: Utils.px2dp(710 / this._iconsModel.numPerLine),
 			height: Utils.px2dp(146),
-			child: new GestureDetector(
+			child: InkWell(
 				child: Column(
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: <Widget>[
