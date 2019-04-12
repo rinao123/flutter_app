@@ -12,8 +12,16 @@ class IconsModel extends BaseModel {
 
 	static IconsModel fromJson(Map<String, dynamic> json) {
 		IconsModel iconsModel = new IconsModel();
+		if (json["numPerLine"] is String) {
+			json["numPerLine"] = int.parse(json["numPerLine"]);
+		}
 		iconsModel.numPerLine = json["numPerLine"];
-		iconsModel.items = json["items"];
+		List<IconModel> items = [];
+		for (dynamic item in json["items"]) {
+			IconModel iconModel = IconModel.fromJson(item);
+			items.add(iconModel);
+		}
+		iconsModel.items = items;
 		iconsModel.ts = DateTime.now().millisecondsSinceEpoch;
 		iconsModel.isShow = true;
 		return iconsModel;

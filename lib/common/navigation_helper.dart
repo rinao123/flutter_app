@@ -8,7 +8,7 @@ import "package:flutter_app/pages/special.dart";
 
 class NavigationHelper {
     static getPage(String path, {Map<String, dynamic> params}) {
-        switch(path){
+        switch (path) {
         case "/pages/home/home":
             return new Home();
         case "/pages/index/index":
@@ -31,8 +31,9 @@ class NavigationHelper {
     }
 
     static void navigateTo(BuildContext context, String url) {
-        Map<String, dynamic> data = getPathAndParams(url);
-        var page = getPage(data["path"], params: data["params"]);
+        String path = getPath(url);
+        Map<String, String> params = getParams(url);
+        var page = getPage(path, params: params);
         if (page == null) {
             print("navigateTo page is null");
             return;
@@ -55,8 +56,9 @@ class NavigationHelper {
     }
 
     static void redirect(BuildContext context, String url) {
-        Map<String, dynamic> data = getPathAndParams(url);
-        var page = getPage(data["path"], params: data["params"]);
+        String path = getPath(url);
+        Map<String, String> params = getParams(url);
+        var page = getPage(path, params: params);
         if (page == null) {
             print("navigateTo page is null");
             return;
@@ -69,9 +71,13 @@ class NavigationHelper {
         ));
     }
 
-    static Map<String, dynamic> getPathAndParams(String url) {
+    static String getPath(String url) {
         List<String> strs = url.split("?");
-        String path = strs[0];
+        return strs[0];
+    }
+
+    static Map<String, String> getParams(String url) {
+        List<String> strs = url.split("?");
         Map<String, String> params = {};
         if (strs.length > 1) {
             String queryString = strs[1];
@@ -83,6 +89,6 @@ class NavigationHelper {
                 params[key] = value;
             }
         }
-        return {"path": path, "params": params};
+        return params;
     }
 }

@@ -3,11 +3,9 @@ import "package:flutter/widgets.dart";
 import "package:flutter_app/components/layout.dart";
 
 class Special extends StatefulWidget {
-	String _code;
+	final String _code;
 
-	Special(String code) {
-		this._code = code;
-	}
+	Special(this._code);
 
 	@override
 	State<StatefulWidget> createState() {

@@ -16,8 +16,8 @@ class _MemberState extends State<Member> {
 				backgroundColor: Colors.white,
 				brightness: Brightness.light,
 				title: Text(
-						"会员中心",
-						style: TextStyle(color: Colors.black)
+					"会员中心",
+					style: TextStyle(color: Colors.black)
 				),
 			),
 			body: Column(

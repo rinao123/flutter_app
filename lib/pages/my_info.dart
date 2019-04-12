@@ -16,8 +16,8 @@ class _MyInfoState extends State<MyInfo> {
 				backgroundColor: Colors.white,
 				brightness: Brightness.light,
 				title: Text(
-						"我的",
-						style: TextStyle(color: Colors.black)
+					"我的",
+					style: TextStyle(color: Colors.black)
 				),
 			),
 			body: Column(

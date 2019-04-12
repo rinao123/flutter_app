@@ -16,8 +16,8 @@ class _CartState extends State<Cart> {
 				backgroundColor: Colors.white,
 				brightness: Brightness.light,
 				title: Text(
-						"购物袋",
-						style: TextStyle(color: Colors.black)
+					"购物袋",
+					style: TextStyle(color: Colors.black)
 				),
 			),
 			body: Column(

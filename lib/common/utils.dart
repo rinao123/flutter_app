@@ -21,8 +21,43 @@ class Utils {
         }
     }
 
-    static Color getColorFromHex(String rgb) {
-        String hexColor = rgb.toUpperCase().replaceAll("#", "");
+    static Color getColorFromString(String str) {
+        if (str.contains("#")) {
+            return getColorFromHex(str);
+        } else {
+            return getColorFromRGBA(str);
+        }
+    }
+
+    static Color getColorFromRGBA(String rgba) {
+        rgba = rgba.toUpperCase().replaceAll(" ", "");
+        int leftIndex = rgba.indexOf("(");
+        if (leftIndex <= -1) {
+            print("getColorFromRGBA invalid rgba value");
+            return null;
+        }
+        rgba = rgba.substring(leftIndex + 1);
+        int rightIndex = rgba.indexOf(")");
+        if (rightIndex <= -1) {
+            print("getColorFromRGBA invalid rgba value");
+            return null;
+        }
+
+        rgba = rgba.substring(0, rightIndex);
+        List<String> values = rgba.split(",");
+        if (values.length < 4) {
+            print("getColorFromRGBA invalid rgba value");
+            return null;
+        }
+        int red = int.parse(values[0]);
+        int green = int.parse(values[1]);
+        int blue = int.parse(values[2]);
+        double opacity = double.parse(values[3]);
+        return Color.fromRGBO(red, green, blue, opacity);
+    }
+
+    static Color getColorFromHex(String hex) {
+        String hexColor = hex.toUpperCase().replaceAll("#", "");
         if (hexColor.length != 6) {
             print("getColorFromHex invalid rgb value");
             return null;

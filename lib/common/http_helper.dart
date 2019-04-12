@@ -17,6 +17,8 @@ class HttpHelper {
         options.headers["appkey"] = Config.APP_KEY;
         Dio dio = _getInstance();
         Response response = await dio.request(path, data: data, queryParameters: queryParameters, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress, onReceiveProgress: onReceiveProgress);
+        print(path);
+        print(response);
         return response;
     }
 }

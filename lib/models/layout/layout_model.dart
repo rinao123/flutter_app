@@ -1,6 +1,8 @@
+import "package:flutter_app/models/layout/icons_model.dart";
 import "package:flutter_app/models/layout/share_info_model.dart";
 import "package:flutter_app/models/layout/base_model.dart";
 import "package:flutter_app/models/layout/img1_model.dart";
+import "package:flutter_app/models/layout/carousel_model.dart";
 
 class LayoutModel {
 	String _backgroundColor;
@@ -52,9 +54,13 @@ class LayoutModel {
 	}
 
 	static BaseModel getModule(Map<String, dynamic> item) {
-		switch(item["module"]) {
+		switch (item["module"]) {
+			case "swiper":
+				return CarouselModel.fromJson(item);
 			case "img1":
 				return Img1Model.fromJson(item);
+			case "icons":
+				return IconsModel.fromJson(item);
 			default:
 				print("getModule unknown module");
 				return null;

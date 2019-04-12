@@ -5,11 +5,9 @@ import "package:flutter_app/components/layout/layout_behaviors.dart";
 import "package:flutter_app/models/layout/img1_model.dart";
 
 class Img1 extends StatefulWidget {
-	Img1Model _img1Model;
+	final Img1Model _img1Model;
 
-	Img1(Img1Model img1Model) {
-		this._img1Model = img1Model;
-	}
+	Img1(this._img1Model);
 
 	@override
 	State<StatefulWidget> createState() {
@@ -20,9 +18,7 @@ class Img1 extends StatefulWidget {
 class _Img1State extends State<Img1> with LayoutBehaviors {
 	Img1Model _img1Model;
 
-	_Img1State(Img1Model img1Model) {
-		this._img1Model = img1Model;
-	}
+	_Img1State(this._img1Model);
 
 	@override
 	Widget build(BuildContext context) {

@@ -19,7 +19,7 @@ class Img1Model extends BaseModel {
 	set height(int height) => this._height = height;
 
 	String get switchTab => this._switchTab;
-	set switchTab(String switchTab) => switchTab = switchTab;
+	set switchTab(String switchTab) => this._switchTab = switchTab;
 
 	String get link => this._link;
 	set link(String link) => this._link = link;

@@ -5,15 +5,14 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/common//navigation_helper.dart";
 
 class Home extends StatefulWidget {
-    int _curIndex;
 
-    Home({int index = 0}) {
-        this._curIndex = index;
-    }
+    final int curIndex;
+
+    Home({this.curIndex = 0});
 
     @override
     State<StatefulWidget> createState() {
-        return new _HomeState(index: this._curIndex);
+        return new _HomeState(index: this.curIndex);
     }
 }
 
@@ -47,9 +46,7 @@ class _HomeState extends State<Home> {
 			type: BottomNavigationBarType.fixed,
             items: this._buildBottomNavigationBarItems(),
             onTap: (index) {
-                this.setState(() {
-                   this._curIndex = index;
-                });
+                this.setState(() => this._curIndex = index);
             },
         );
     }
@@ -65,7 +62,7 @@ class _HomeState extends State<Home> {
 
     BottomNavigationBarItem _buildBottomNavigationBarItem(index, item) {
         String iconPath = index == this._curIndex ? item["selectedIconPath"] : item["iconPath"];
-        Color color = Utils.getColorFromHex(index == this._curIndex ? Config.TAB_BAR["selectedColor"] : Config.TAB_BAR["color"]);
+        Color color = Utils.getColorFromString(index == this._curIndex ? Config.TAB_BAR["selectedColor"] : Config.TAB_BAR["color"]);
         FontWeight fontWeight = index == this._curIndex ? FontWeight.bold : FontWeight.normal;
         return BottomNavigationBarItem(
             icon: Image(
