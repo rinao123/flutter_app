@@ -4,7 +4,6 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout/layout_behaviors.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/advice.dart";
-import "package:flutter_app/models/layout/layout_model.dart";
 import "package:flutter_app/models/layout/carousel_model.dart";
 import "package:flutter_swiper/flutter_swiper.dart";
 
@@ -55,10 +54,11 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors {
 						itemCount: this._advices.length,
 						itemBuilder: (BuildContext context, int index) {
 							Advice advice = this._advices[index];
-							return Image(
-								image: new NetworkImage(advice.picUrl),
-								width: Utils.px2dp(advice.width),
-								height: Utils.px2dp(advice.height)
+							return FadeInImage.assetNetwork(
+									image: advice.picUrl,
+									placeholder: "assets/images/loading.gif",
+									width: Utils.px2dp(advice.width),
+									height: Utils.px2dp(advice.height)
 							);
 						},
 						onTap: (int index) => this.onTap(context, this._advices[index]),

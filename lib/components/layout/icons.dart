@@ -59,8 +59,9 @@ class _IconsState extends State<Icons> with LayoutBehaviors {
 					mainAxisAlignment: MainAxisAlignment.center,
 					children: <Widget>[
 						ClipOval(
-							child: Image(
-								image: new NetworkImage(iconModel.img),
+							child: FadeInImage.assetNetwork(
+								image: iconModel.img,
+								placeholder: "assets/images/loading.gif",
 								width: Utils.px2dp(100),
 								height: Utils.px2dp(100)
 							)
