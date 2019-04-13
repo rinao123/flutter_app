@@ -5,7 +5,7 @@ class PageStatus extends StatefulWidget {
 
 	@override
 	State<StatefulWidget> createState() {
-		return new _PageStatusState();
+		return _PageStatusState();
 	}
 }
 

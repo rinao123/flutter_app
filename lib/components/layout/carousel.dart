@@ -14,11 +14,11 @@ class Carousel extends StatefulWidget {
 
 	@override
 	State<StatefulWidget> createState() {
-		return new _CarouselState(this._carouselModel);
+		return _CarouselState(this._carouselModel);
 	}
 }
 
-class _CarouselState extends State<Carousel> with LayoutBehaviors {
+class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeepAliveClientMixin<Carousel> {
 	CarouselModel _carouselModel;
 	List<Advice> _advices;
 	int curIndex = 0;
@@ -43,7 +43,7 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors {
 				)
 			);
 		}
-		return new Container(
+		return Container(
 			width: Utils.px2dp(this._advices[0].width),
 			height: Utils.px2dp(this._advices[0].height),
 			child: Stack(
@@ -108,6 +108,12 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors {
 
 	void getAdList() async {
 		List<Advice> advices = await SiteController.getAdList(this._carouselModel.code);
+		if (advices == null) {
+			return;
+		}
 		this.setState(() => this._advices = advices);
 	}
+
+  @override
+  bool get wantKeepAlive => true;
 }

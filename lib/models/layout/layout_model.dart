@@ -1,3 +1,4 @@
+import "package:flutter_app/models/layout/goods_list_model.dart";
 import "package:flutter_app/models/layout/icons_model.dart";
 import "package:flutter_app/models/layout/share_info_model.dart";
 import "package:flutter_app/models/layout/base_model.dart";
@@ -27,7 +28,7 @@ class LayoutModel {
 	set modules(List<BaseModel> modules) => this._modules = modules;
 
 	static LayoutModel fromJson(Map<String, dynamic> json) {
-		LayoutModel layoutModel = new LayoutModel();
+		LayoutModel layoutModel = LayoutModel();
 		layoutModel.backgroundColor = json["backgroundColor"];
 		layoutModel.frontColor = json["frontColor"];
 		layoutModel.title = json["title"];
@@ -44,11 +45,12 @@ class LayoutModel {
 	}
 
 	Map<String, dynamic> toJson(){
+		//TODO
 		return {
-			"backgroundColor": this._backgroundColor,
-			"frontColor": this._frontColor,
-			"title": this._title,
-			"shareInfo": this._shareInfo.toJson(),
+			"backgroundColor": this.backgroundColor,
+			"frontColor": this.frontColor,
+			"title": this.title,
+			"shareInfo": this.shareInfo.toJson(),
 			"modules": ""
 		};
 	}
@@ -61,6 +63,8 @@ class LayoutModel {
 				return Img1Model.fromJson(item);
 			case "icons":
 				return IconsModel.fromJson(item);
+			case "goods_list":
+				return GoodsListModel.fromJson(item);
 			default:
 				print("getModule unknown module");
 				return null;

@@ -12,7 +12,7 @@ class Icons extends StatefulWidget {
 
 	@override
 	State<StatefulWidget> createState() {
-		return new _IconsState(this._iconsModel);
+		return _IconsState(this._iconsModel);
 	}
 }
 
@@ -23,21 +23,24 @@ class _IconsState extends State<Icons> with LayoutBehaviors {
 
 	@override
 	Widget build(BuildContext context) {
-		return Row(
-			children: <Widget>[
-				Padding(padding: EdgeInsets.only(right: Utils.px2dp(20))),
-				Column(
-					children: <Widget>[
-						Padding(padding: EdgeInsets.only(top: Utils.px2dp(20))),
-						Container(
-							width: Utils.px2dp(730),
-							child: Wrap(
-								children: this._buildItems()
+		return Container(
+			color: Utils.getColorFromString("#FFFFFF"),
+			child: Row(
+				children: <Widget>[
+					Padding(padding: EdgeInsets.only(right: Utils.px2dp(20))),
+					Column(
+						children: <Widget>[
+							Padding(padding: EdgeInsets.only(top: Utils.px2dp(20))),
+							Container(
+								width: Utils.px2dp(730),
+								child: Wrap(
+									children: this._buildItems()
+								)
 							)
-						)
-					],
-				)
-			],
+						]
+					)
+				]
+			)
 		);
 	}
 

@@ -1,4 +1,5 @@
 import "package:flutter/widgets.dart";
+import "package:flutter_app/pages/goods_detail.dart";
 import "package:flutter_app/pages/home.dart";
 import "package:flutter_app/pages/index.dart";
 import "package:flutter_app/pages/member.dart";
@@ -9,22 +10,29 @@ import "package:flutter_app/pages/special.dart";
 class NavigationHelper {
     static getPage(String path, {Map<String, dynamic> params}) {
         switch (path) {
-        case "/pages/home/home":
-            return new Home();
-        case "/pages/index/index":
-            return new Index();
+            case "/pages/home/home":
+                return Home();
+            case "/pages/index/index":
+                return Index();
             case "/pages/member/member":
-                return new Member();
+                return Member();
             case "/pages/cart/cart":
-                return new Cart();
+                return Cart();
             case "/pages/myinfo/myinfo":
-                return new MyInfo();
+                return MyInfo();
             case "/pages/special/special":
                 if (!params.containsKey("code")) {
-                    print("getPage code is null");
+                    print("getPage Special code is null");
                     return null;
                 }
-                return new Special(params["code"]);
+                return Special(params["code"]);
+            case "/pages/goods_detail/goods_detail":
+                if (!params.containsKey("id")) {
+                    print("getPage GoodsDetail id is null");
+                    return null;
+                }
+                int id = int.parse(params["id"]);
+                return GoodsDetail(id);
             default:
                 print("NavigationHelper invalid path");
         }
@@ -44,10 +52,10 @@ class NavigationHelper {
                 return page;
             },
             transitionsBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-                return new SlideTransition(
-                    position: new Tween<Offset>(
-                        begin: const Offset(1.0, 0.0),
-                        end: const Offset(0.0, 0.0),
+                return SlideTransition(
+                    position: Tween<Offset>(
+                        begin: Offset(1.0, 0.0),
+                        end: Offset(0.0, 0.0),
                     ).animate(animation),
                     child: child,
                 );

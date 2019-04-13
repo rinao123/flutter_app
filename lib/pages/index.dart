@@ -5,7 +5,7 @@ import "package:flutter_app/components/layout.dart";
 class Index extends StatefulWidget {
 	@override
 	State<StatefulWidget> createState() {
-		return new _IndexState();
+		return _IndexState();
 	}
 }
 

@@ -34,7 +34,7 @@ class Advice {
 	set link(String link) => this._link = link;
 
 	static Advice fromJson(Map<String, dynamic> json) {
-		Advice advice = new Advice();
+		Advice advice = Advice();
 		advice.id = json["id"];
 		advice.adposId = json["adposId"];
 		advice.picUrl = json["picUrl"];
@@ -48,14 +48,14 @@ class Advice {
 
 	Map<String, dynamic> toJson(){
 		return {
-			"id": this._id,
-			"adposId": this._adposId,
-			"picUrl": this._picUrl,
-			"width": this._width,
-			"height": this._height,
-			"title": this._title,
-			"originLink": this._originLink,
-			"link": this._link,
+			"id": this.id,
+			"adposId": this.adposId,
+			"picUrl": this.picUrl,
+			"width": this.width,
+			"height": this.height,
+			"title": this.title,
+			"originLink": this.originLink,
+			"link": this.link,
 		};
 	}
 

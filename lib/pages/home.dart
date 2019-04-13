@@ -12,7 +12,7 @@ class Home extends StatefulWidget {
 
     @override
     State<StatefulWidget> createState() {
-        return new _HomeState(index: this.curIndex);
+        return _HomeState(index: this.curIndex);
     }
 }
 

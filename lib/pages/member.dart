@@ -4,7 +4,7 @@ import "package:flutter/widgets.dart";
 class Member extends StatefulWidget {
 	@override
 	State<StatefulWidget> createState() {
-		return new _MemberState();
+		return _MemberState();
 	}
 }
 

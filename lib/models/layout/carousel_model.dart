@@ -19,7 +19,7 @@ class CarouselModel extends BaseModel {
 	set num(int num) => this._num = num;
 
 	static CarouselModel fromJson(Map<String, dynamic> json) {
-		CarouselModel carouselModel = new CarouselModel();
+		CarouselModel carouselModel = CarouselModel();
 		carouselModel.code = json["code"];
 		carouselModel.indicatorColor = json["indicatorColor"];
 		carouselModel.indicatorActiveColor = json["indicatorActiveColor"];
@@ -29,16 +29,17 @@ class CarouselModel extends BaseModel {
 		carouselModel.num = json["num"];
 		carouselModel.ts = DateTime.now().millisecondsSinceEpoch;
 		carouselModel.isShow = true;
+		carouselModel.isReachBottom = true;
 		return carouselModel;
 	}
 
 	Map<String, dynamic> toJson(){
 		return {
 			"module": "swiper",
-			"code": this._code,
-			"indicatorColor": this._indicatorColor,
-			"indicatorActiveColor": this._indicatorActiveColor,
-			"num": this._num
+			"code": this.code,
+			"indicatorColor": this.indicatorColor,
+			"indicatorActiveColor": this.indicatorActiveColor,
+			"num": this.num
 		};
 	}
 }

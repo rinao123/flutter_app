@@ -15,7 +15,7 @@ class App extends StatelessWidget {
     Widget build(BuildContext context) {
         return MaterialApp(
             title: Config.APP_NAME,
-            home: new Splash()
+            home: Splash()
         );
     }
 }

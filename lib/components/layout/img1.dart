@@ -11,7 +11,7 @@ class Img1 extends StatefulWidget {
 
 	@override
 	State<StatefulWidget> createState() {
-		return new _Img1State(this._img1Model);
+		return _Img1State(this._img1Model);
 	}
 }
 
@@ -22,21 +22,18 @@ class _Img1State extends State<Img1> with LayoutBehaviors {
 
 	@override
 	Widget build(BuildContext context) {
-		return Row(
-			crossAxisAlignment: CrossAxisAlignment.center,
-			children: <Widget>[
-				InkWell (
-					child: FadeInImage.assetNetwork(
-						image: this._img1Model.img,
-						placeholder: "assets/images/loading.gif",
-						width: Utils.px2dp(this._img1Model.width),
-						height: Utils.px2dp(this._img1Model.height)
-					),
-					onTap: () {
-						this.onTap(context, this._img1Model);
-					}
-				)
-			]
+		return Center(
+			child: InkWell (
+				child: FadeInImage.assetNetwork(
+					image: this._img1Model.img,
+					placeholder: "assets/images/loading.gif",
+					width: Utils.px2dp(this._img1Model.width),
+					height: Utils.px2dp(this._img1Model.height)
+				),
+				onTap: () {
+					this.onTap(context, this._img1Model);
+				}
+			)
 		);
 	}
 }

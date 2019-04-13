@@ -4,7 +4,7 @@ import "package:flutter/widgets.dart";
 class MyInfo extends StatefulWidget {
 	@override
 	State<StatefulWidget> createState() {
-		return new _MyInfoState();
+		return _MyInfoState();
 	}
 }
 

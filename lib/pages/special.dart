@@ -9,7 +9,7 @@ class Special extends StatefulWidget {
 
 	@override
 	State<StatefulWidget> createState() {
-		return new _SpecialState(this._code);
+		return _SpecialState(this._code);
 	}
 }
 
@@ -22,6 +22,6 @@ class _SpecialState extends State<Special> {
 
 	@override
 	Widget build(BuildContext context) {
-		return new Layout(this._code);
+		return Layout(this._code);
 	}
 }

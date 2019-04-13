@@ -14,7 +14,7 @@ class ShareInfoModel {
 	set title(String title) => this._title = title;
 
 	static ShareInfoModel fromJson(Map<String, dynamic> json) {
-		ShareInfoModel shareInfoModel = new ShareInfoModel();
+		ShareInfoModel shareInfoModel = ShareInfoModel();
 		shareInfoModel.img = json["img"];
 		shareInfoModel.path = json["path"];
 		shareInfoModel.title = json["title"];
@@ -23,9 +23,9 @@ class ShareInfoModel {
 
 	Map<String, dynamic> toJson(){
 		return {
-			"img": this._img,
-			"path": this._path,
-			"title": this._title
+			"img": this.img,
+			"path": this.path,
+			"title": this.title
 		};
 	}
 }

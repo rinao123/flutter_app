@@ -31,7 +31,7 @@ class Img1Model extends BaseModel {
 	set copy(String copy) => this._copy = copy;
 
 	static Img1Model fromJson(Map<String, dynamic> json) {
-		Img1Model img1Model = new Img1Model();
+		Img1Model img1Model = Img1Model();
 		img1Model.img = json["img"];
 		img1Model.width = json["width"];
 		img1Model.height = json["height"];
@@ -41,18 +41,19 @@ class Img1Model extends BaseModel {
 		img1Model.copy = json["copy"];
 		img1Model.ts = DateTime.now().millisecondsSinceEpoch;
 		img1Model.isShow = true;
+		img1Model.isReachBottom = true;
 		return img1Model;
 	}
 
 	Map<String, dynamic> toJson(){
 		return {
 			"module": "img1",
-			"img": this._img,
-			"width": this._width,
-			"height": this._height,
-			"switch": this._switchTab,
-			"link": this._link,
-			"openType": this._openType,
+			"img": this.img,
+			"width": this.width,
+			"height": this.height,
+			"switch": this.switchTab,
+			"link": this.link,
+			"openType": this.openType,
 			"copy": this.copy
 		};
 	}

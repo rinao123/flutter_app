@@ -3,6 +3,7 @@ import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout/carousel.dart";
+import "package:flutter_app/components/layout/goods_list.dart";
 import "package:flutter_app/components/page_status.dart";
 import "package:flutter_app/components/layout/icons.dart" as icons;
 import "package:flutter_app/components/layout/img1.dart";
@@ -18,7 +19,7 @@ class Layout extends StatefulWidget {
 
 	@override
 	State<StatefulWidget> createState() {
-		return new _LayoutState(this._code);
+		return _LayoutState(this._code);
 	}
 }
 
@@ -45,7 +46,7 @@ class _LayoutState extends State<Layout> {
 					brightness: Brightness.light,
           			iconTheme: IconThemeData(color: Colors.white)
 				),
-				body: new PageStatus()
+				body: PageStatus()
 			);
 		}
 		return Scaffold(
@@ -63,12 +64,15 @@ class _LayoutState extends State<Layout> {
 	}
 
 	Widget _buildBody() {
-		return RefreshIndicator(
-			onRefresh: this._onRefresh,
-			child: ListView.builder(
-				itemBuilder: this._buildBodyItem,
-				itemCount: this._layoutModel.modules.length,
-			),
+		return Container(
+			color: Utils.getColorFromString("#F5F5F5"),
+			child: RefreshIndicator(
+				onRefresh: this._onRefresh,
+				child: ListView.builder(
+					itemBuilder: this._buildBodyItem,
+					itemCount: this._layoutModel.modules.length
+				)
+			)
 		);
 	}
 
@@ -76,11 +80,13 @@ class _LayoutState extends State<Layout> {
 		BaseModel module = this._layoutModel.modules[index];
 		switch (module.runtimeType.toString()) {
 			case "CarouselModel":
-				return new Carousel(module);
+				return Carousel(module);
 			case "Img1Model":
-				return new Img1(module);
+				return Img1(module);
 			case "IconsModel":
-				return new icons.Icons(module);
+				return icons.Icons(module);
+			case "GoodsListModel":
+				return GoodsList(module);
 			default:
 				print("_buildBodyItem unknown module");
 				return null;
@@ -88,11 +94,15 @@ class _LayoutState extends State<Layout> {
 	}
 
 	Future<void> _onRefresh() async {
+		this.setState(() => this._layoutModel = null);
 		this.getLayouts();
 	}
 
 	void getLayouts() async {
 		LayoutModel layoutModel = await SiteController.getLayoutByCode(this._code);
+		if (layoutModel == null) {
+			return;
+		}
 		this.setState(() => this._layoutModel = layoutModel);
 	}
 }

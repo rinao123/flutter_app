@@ -12,6 +12,7 @@ class Utils {
 
     static dynamic getDeviceInfo() async {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+        print(deviceInfo.toString());
         if (Platform.isAndroid) {
             return await deviceInfo.androidInfo;
         } else if (Platform.isIOS) {
@@ -64,5 +65,32 @@ class Utils {
         }
         hexColor = "FF" + hexColor;
         return Color(int.parse(hexColor, radix: 16));
+    }
+
+    static String getSkey() {
+        return "cf6aec47-1ec4-4fda-a126-12af6d72054d";
+    }
+
+    static String removeNumEndZero(String num) {
+        if (!num.contains(".")) {
+            return num;
+        }
+        List<String> strs = num.split(".");
+        String result = strs[0];
+        String decimal = "";
+        bool flag = false;
+        for (int i = strs[1].length - 1; i >= 0; i--) {
+            if (flag) {
+                decimal = strs[1][i] + decimal;
+            }
+            if (!flag && strs[1][i] != "0") {
+                decimal = strs[1][i] + decimal;
+                flag = true;
+            }
+        }
+        if (decimal != "") {
+            result += "." + decimal;
+        }
+        return result;
     }
 }

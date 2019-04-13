@@ -11,7 +11,7 @@ class IconsModel extends BaseModel {
 	set items(List<IconModel> items) => this._items = items;
 
 	static IconsModel fromJson(Map<String, dynamic> json) {
-		IconsModel iconsModel = new IconsModel();
+		IconsModel iconsModel = IconsModel();
 		if (json["numPerLine"] is String) {
 			json["numPerLine"] = int.parse(json["numPerLine"]);
 		}
@@ -24,14 +24,19 @@ class IconsModel extends BaseModel {
 		iconsModel.items = items;
 		iconsModel.ts = DateTime.now().millisecondsSinceEpoch;
 		iconsModel.isShow = true;
+		iconsModel.isReachBottom = true;
 		return iconsModel;
 	}
 
 	Map<String, dynamic> toJson(){
+		List<Map<String, dynamic>> items = [];
+		for (IconModel item in this.items) {
+			items.add(item.toJson());
+		}
 		return {
 			"module": "icons",
-			"numPerLine": this._numPerLine,
-			"items": this._items
+			"numPerLine": this.numPerLine,
+			"items": items
 		};
 	}
 }
@@ -71,7 +76,7 @@ class IconModel {
 	set copy(String copy) => this._copy = copy;
 
 	static IconModel fromJson(Map<String, dynamic> json) {
-		IconModel iconModel = new IconModel();
+		IconModel iconModel = IconModel();
 		iconModel.img = json["img"];
 		iconModel.title = json["title"];
 		iconModel.width = json["width"];
@@ -85,13 +90,13 @@ class IconModel {
 
 	Map<String, dynamic> toJson(){
 		return {
-			"img": this._img,
-			"title": this._title,
-			"width": this._width,
-			"height": this._height,
-			"switchTab": this._switchTab,
-			"link": this._link,
-			"openType": this._openType,
+			"img": this.img,
+			"title": this.title,
+			"width": this.width,
+			"height": this.height,
+			"switchTab": this.switchTab,
+			"link": this.link,
+			"openType": this.openType,
 			"copy": this.copy
 		};
 	}

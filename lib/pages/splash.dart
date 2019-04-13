@@ -11,7 +11,7 @@ import "package:flutter_app/configs/config.dart";
 class Splash extends StatefulWidget {
     @override
     State<StatefulWidget> createState() {
-        return new _SplashState();
+        return _SplashState();
     }
 }
 
@@ -62,7 +62,7 @@ class _SplashState extends State<Splash> {
     }
 
     void _countDown() {
-        this._timer = Timer.periodic(new Duration(seconds: 1), (timer) {
+        this._timer = Timer.periodic(Duration(seconds: 1), (timer) {
             this.setState(() {
                 this._count--;
                 if (this._count == 0) {

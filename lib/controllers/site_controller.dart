@@ -6,6 +6,9 @@ import "package:flutter_app/models/layout/layout_model.dart";
 class SiteController {
 	static Future<LayoutModel> getLayoutByCode(String code) async {
 		Response response = await SiteApi.getLayoutByCode(code);
+		if (response == null) {
+			return null;
+		}
 		if (response.data["ret"] != 0) {
 			print("getLayoutByCode fail:${response.data["msg"]}");
 			return null;
@@ -20,11 +23,17 @@ class SiteController {
 
 	static Future<LayoutModel> getLayouts(String url) async {
 		Response response = await SiteApi.getLayouts(url);
+		if (response == null) {
+			return null;
+		}
 		return LayoutModel.fromJson(response.data);
 	}
 
 	static Future<List<Advice>> getAdList(String code) async {
 		Response response = await SiteApi.getAdList(code);
+		if (response == null) {
+			return null;
+		}
 		if (response.data["ret"] != 0) {
 			print("getAdList fail:${response.data["msg"]}");
 			return null;
