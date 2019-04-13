@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
 
     BottomNavigationBarItem _buildBottomNavigationBarItem(index, item) {
         String iconPath = index == this._curIndex ? item["selectedIconPath"] : item["iconPath"];
-        Color color = Utils.getColorFromString(index == this._curIndex ? Config.TAB_BAR["selectedColor"] : Config.TAB_BAR["color"]);
+        Color color = Utils.getColorFromString(index == this._curIndex ? item["selectedColor"] : item["color"]);
         FontWeight fontWeight = index == this._curIndex ? FontWeight.bold : FontWeight.normal;
         return BottomNavigationBarItem(
             icon: Image(

@@ -5,6 +5,7 @@ import "package:flutter_app/pages/index.dart";
 import "package:flutter_app/pages/member.dart";
 import "package:flutter_app/pages/cart.dart";
 import "package:flutter_app/pages/my_info.dart";
+import "package:flutter_app/pages/recommend.dart";
 import "package:flutter_app/pages/special.dart";
 
 class NavigationHelper {
@@ -16,6 +17,8 @@ class NavigationHelper {
                 return Index();
             case "/pages/member/member":
                 return Member();
+            case "/pages/recommend/recommend":
+                return Recommend();
             case "/pages/cart/cart":
                 return Cart();
             case "/pages/myinfo/myinfo":

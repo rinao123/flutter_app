@@ -54,6 +54,8 @@ flutter:
   - assets/images/index_selected.png
   - assets/images/member.png
   - assets/images/member_selected.png
+  - assets/images/recommend.png
+  - assets/images/recommend_selected.png
   - assets/images/cart.png
   - assets/images/cart_selected.png
   - assets/images/myinfo.png
