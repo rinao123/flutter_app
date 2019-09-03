@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
-import "package:flutter_app/components/layout.dart";
+import "package:flutter_app/components/layout_page.dart";
 
 class Special extends StatefulWidget {
 	final String _code;
@@ -22,6 +22,6 @@ class _SpecialState extends State<Special> {
 
 	@override
 	Widget build(BuildContext context) {
-		return Layout(this._code);
+		return LayoutPage(this._code);
 	}
 }

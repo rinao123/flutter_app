@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
-import "package:flutter_app/components/layout.dart";
+import "package:flutter_app/components/layout_page.dart";
 
 class Index extends StatefulWidget {
 	@override
@@ -13,6 +13,6 @@ class _IndexState extends State<Index> {
 
 	@override
 	Widget build(BuildContext context) {
-		return Layout("index");
+		return LayoutPage("index");
 	}
 }

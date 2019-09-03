@@ -13,17 +13,14 @@ class Carousel extends StatefulWidget {
 	Carousel(this._carouselModel);
 
 	@override
-	State<StatefulWidget> createState() {
-		return _CarouselState(this._carouselModel);
-	}
+	State<StatefulWidget> createState() => _CarouselState();
 }
 
 class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeepAliveClientMixin<Carousel> {
-	CarouselModel _carouselModel;
 	List<Advice> _advices;
 	int curIndex = 0;
 
-	_CarouselState(this._carouselModel, {this.curIndex = 0});
+	_CarouselState();
 
 	@override
 	void initState() {
@@ -43,13 +40,16 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 				)
 			);
 		}
+		print(this._advices);
 		return Container(
 			width: Utils.px2dp(this._advices[0].width),
 			height: Utils.px2dp(this._advices[0].height),
 			child: Stack(
 				children: <Widget>[
 					Swiper(
-						autoplay: true,
+						autoplayDelay: 5000,
+						autoplay: this._advices.length > 1,
+						loop: this._advices.length > 1,
 						duration: 500,
 						itemCount: this._advices.length,
 						itemBuilder: (BuildContext context, int index) {
@@ -74,7 +74,7 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 
 	Widget _buildIndicator() {
 		if (this._advices.length == 1) {
-			return null;
+			return Container();
 		}
 		return Positioned(
 			bottom: Utils.px2dp(20),
@@ -91,7 +91,7 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 	List<Widget> _buildIndicatorItems() {
 		List<Widget> items = [];
 		for (int i = 0; i < this._advices.length; i++) {
-			Color color = Utils.getColorFromString(i == this.curIndex ? this._carouselModel.indicatorActiveColor : this._carouselModel.indicatorColor);
+			Color color = Utils.getColorFromString(i == this.curIndex ? widget._carouselModel.indicatorActiveColor : widget._carouselModel.indicatorColor);
 			items.add(Container(
 				color: color,
 				width: Utils.px2dp(32),
@@ -107,7 +107,7 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 	}
 
 	void getAdList() async {
-		List<Advice> advices = await SiteController.getAdList(this._carouselModel.code);
+		List<Advice> advices = await SiteController.getAdList(widget._carouselModel.code);
 		if (advices == null) {
 			return;
 		}

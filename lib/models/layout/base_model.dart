@@ -12,4 +12,6 @@ abstract class BaseModel {
 
 	bool get isReachBottom => this._isReachBottom;
 	set isReachBottom(bool isReachBottom) => this._isReachBottom = isReachBottom;
+
+	Map<String, dynamic> toJson();
 }

@@ -47,13 +47,16 @@ class LayoutModel {
 	}
 
 	Map<String, dynamic> toJson(){
-		//TODO
+		List<Map<String, dynamic>> modules = [];
+		for (BaseModel module in this._modules) {
+			modules.add(module.toJson());
+		}
 		return {
 			"backgroundColor": this.backgroundColor,
 			"frontColor": this.frontColor,
 			"title": this.title,
 			"shareInfo": this.shareInfo.toJson(),
-			"modules": ""
+			"modules": modules.toString()
 		};
 	}
 

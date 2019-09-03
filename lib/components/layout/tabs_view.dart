@@ -1,9 +1,11 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
-import "package:flutter_app/common/utils.dart";
-import 'package:flutter_app/components/layout.dart';
-import "package:flutter_app/components/layout/layout_behaviors.dart";
-import 'package:flutter_app/models/layout/tabs_view_model.dart';
+import 'package:flutter_app/common/utils.dart';
+import "package:flutter_app/components/layout.dart";
+import "package:flutter_app/components/page_status.dart";
+import "package:flutter_app/controllers/site_controller.dart";
+import "package:flutter_app/models/layout/layout_model.dart";
+import "package:flutter_app/models/layout/tabs_view_model.dart";
 
 class TabsView extends StatefulWidget {
 	final TabsViewModel _tabsViewModel;
@@ -11,33 +13,39 @@ class TabsView extends StatefulWidget {
 	TabsView(this._tabsViewModel);
 
 	@override
-	State<StatefulWidget> createState() {
-		return _TabsViewState(this._tabsViewModel);
-	}
+	State<StatefulWidget> createState() => _TabsViewState();
 }
 
 class _TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin {
-	TabsViewModel _tabsViewModel;
-	TabController _tabController;
 	int _index;
+	TabController _tabController;
+	LayoutModel _layoutModel;
 
-	_TabsViewState(this._tabsViewModel) {
+	@override
+	void initState() {
+		super.initState();
+		this._index = 0;
 		this._tabController = TabController(
-			length: this._tabsViewModel.items.length,
+			length: widget._tabsViewModel.items.length,
 			vsync: this
 		);
 		this._tabController.addListener(() {
 			if (this._tabController.indexIsChanging) {
-				this.setState(() => this._index = this._tabController.index);
+				this.setState(() {
+					this._index = this._tabController.index;
+					this.getLayouts();
+				});
 			}
 		});
+		this.getLayouts();
 	}
 
 	@override
 	Widget build(BuildContext context) {
 		return Column(
 			children: <Widget>[
-				this._buildTabs()
+				this._buildTabs(),
+				this._buildLayout()
 			]
 		);
 	}
@@ -46,14 +54,34 @@ class _TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin
 		return TabBar(
 			isScrollable: true,
 			controller: this._tabController,
-			labelColor: Colors.red,
-			unselectedLabelColor: Color(0xff666666),
 			labelStyle: TextStyle(fontSize: 16.0),
-			tabs: this._tabsViewModel.items.map((item) {
+			labelColor: Utils.getColorFromString(widget._tabsViewModel.textColor),
+			unselectedLabelColor: Utils.getColorFromString(widget._tabsViewModel.textColorSelected),
+			indicatorSize: TabBarIndicatorSize.label,
+			indicatorWeight: Utils.px2dp(6),
+			indicatorColor: Utils.getColorFromString(widget._tabsViewModel.lineColor),
+			tabs: widget._tabsViewModel.items.map((item) {
 				return Tab(
 					text: item.title
 				);
 			}).toList()
 		);
+	}
+
+	Widget _buildLayout() {
+		if (this._layoutModel == null) {
+			return PageStatus();
+		} else {
+			return Layout(this._layoutModel.modules);
+		}
+	}
+
+	void getLayouts() async {
+		String code = widget._tabsViewModel.items[this._index].code;
+		LayoutModel layoutModel = await SiteController.getLayoutByCode(code);
+		if (layoutModel == null) {
+			return;
+		}
+		this.setState(() => this._layoutModel = layoutModel);
 	}
 }
