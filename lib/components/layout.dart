@@ -66,6 +66,7 @@ class LayoutState extends State<Layout> {
 				return icons.Icons(module);
 			case "GoodsListModel":
 				GlobalKey<GoodsListState> key = GlobalKey<GoodsListState>();
+				this._keys.add(key);
 				GoodsListModel goodsListModel = module as GoodsListModel;
 				goodsListModel.isLoadingControlByPage = true;
 				return GoodsList(module, key: key);

@@ -102,7 +102,7 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 			return PageStatus();
 		} else {
 			this._layoutStateKey = GlobalKey<LayoutState>();
-			this._layout = Layout(this._layoutModel.modules);
+			this._layout = Layout(this._layoutModel.modules, key: this._layoutStateKey);
 			return this._layout;
 		}
 	}

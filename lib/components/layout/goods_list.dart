@@ -31,6 +31,7 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviors, AutomaticKee
 		this._page = 1;
 		this._isShowLoading = false;
 		this._isReachBottom = false;
+		this._isGoodsListReachBottom = false;
 		this._getGoodsList(1);
 	}
 
@@ -93,7 +94,8 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviors, AutomaticKee
 
 	@override
 	void onReachBottom() {
-		if (this._isReachBottom) {
+		print("onReachBottom");
+		if (!this._isGoodsListReachBottom) {
 			this._getGoodsList(this._page);
 		}
 	}
