@@ -2,13 +2,14 @@ import "dart:io";
 import "dart:ui";
 import "package:flutter/widgets.dart";
 import "package:device_info/device_info.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 class Utils {
-    static final double _designWidth = 750;
+    static const DESIGN_WIDTH = 750;
     static double getScreenWidth() => window.physicalSize.width / window.devicePixelRatio;
     static double getScreenHeight() => window.physicalSize.height / window.devicePixelRatio;
     static double getStatusBarHeight(BuildContext context) => MediaQuery.of(context).padding.top;
-    static double px2dp(px) => getScreenWidth() / (_designWidth / window.devicePixelRatio) * px / window.devicePixelRatio;
+    static double px2dp(px) => getScreenWidth() / (DESIGN_WIDTH / window.devicePixelRatio) * px / window.devicePixelRatio;
 
     static dynamic getDeviceInfo() async {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -66,8 +67,10 @@ class Utils {
         return Color(int.parse(hexColor, radix: 16));
     }
 
-    static String getSkey() {
-        return "cf7a507a-c316-4e0e-bb8c-a31bb7fd10b2";
+    static Future<String> getSkey() async {
+        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        String skey = (sharedPreferences.getString("skey") ?? "");
+        return skey;
     }
 
     static String removeNumEndZero(String num) {
@@ -91,5 +94,30 @@ class Utils {
             result += "." + decimal;
         }
         return result;
+    }
+
+    static String removeLastZero(String num) {
+        if (num.contains(".")) {
+            String str = "";
+            bool isFinished = false;
+            for (int i = num.length - 1; i >= 0; i--) {
+                String ch = num[i];
+                if (isFinished) {
+                    str = ch + str;
+                    continue;
+                }
+                if (ch == "0") {
+                    continue;
+                } else {
+                    isFinished = true;
+                    if (ch != ".") {
+                        str = ch;
+                    }
+                }
+            }
+            return str;
+        } else {
+            return num;
+        }
     }
 }

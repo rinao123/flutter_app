@@ -2,7 +2,6 @@ import "dart:async";
 import "dart:ui";
 
 import "package:flutter/material.dart";
-import 'package:flutter/services.dart';
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/navigation_helper.dart";
 import "package:flutter_app/common/utils.dart";
@@ -25,7 +24,7 @@ class _SplashState extends State<Splash> {
             body: OverflowBox(
                 child: Image(
                     image: AssetImage("assets/images/splash.jpg"),
-                    width: Utils.px2dp(750),
+                    width: Utils.px2dp(Utils.DESIGN_WIDTH),
                     fit: BoxFit.fitWidth,
                     alignment: Alignment.topCenter
                 )
@@ -50,7 +49,7 @@ class _SplashState extends State<Splash> {
             this.setState(() {
                 this._count--;
                 if (this._count == 0) {
-                    this._goToLogin();
+                    this._goToHome();
                     this._timer.cancel();
                 }
             });
@@ -63,6 +62,5 @@ class _SplashState extends State<Splash> {
 
     void _goToHome() {
         NavigationHelper.redirect(context, "/pages/home/home");
-        SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     }
 }

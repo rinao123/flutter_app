@@ -1,5 +1,5 @@
 
-class Advice {
+class AdviceModel {
 	int _id;
 	int _adposId;
 	String _picUrl;
@@ -33,17 +33,17 @@ class Advice {
 	String get link => this._link;
 	set link(String link) => this._link = link;
 
-	static Advice fromJson(Map<String, dynamic> json) {
-		Advice advice = Advice();
-		advice.id = json["id"];
-		advice.adposId = json["adposId"];
-		advice.picUrl = json["picUrl"];
-		advice.width = json["width"];
-		advice.height = json["height"];
-		advice.title = json["title"];
-		advice.originLink = json["link"];
-		advice.link = getLink(json["link"]);
-		return advice;
+	static AdviceModel fromJson(Map<String, dynamic> json) {
+		AdviceModel adviceModel = AdviceModel();
+		adviceModel.id = json["id"];
+		adviceModel.adposId = json["adposId"];
+		adviceModel.picUrl = json["picUrl"];
+		adviceModel.width = json["width"];
+		adviceModel.height = json["height"];
+		adviceModel.title = json["title"];
+		adviceModel.originLink = json["link"];
+		adviceModel.link = getLink(json["link"]);
+		return adviceModel;
 	}
 
 	Map<String, dynamic> toJson(){

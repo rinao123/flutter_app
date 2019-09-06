@@ -80,7 +80,7 @@ class _IconsState extends State<Icons> with LayoutBehaviors {
 					]
 				),
 				onTap: () {
-					this.onTap(context, iconModel);
+					this.onTap(context, link: iconModel.link);
 				}
 			)
 		);

@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
-import 'package:flutter/services.dart';
+import "package:flutter/services.dart";
 import "package:flutter_app/pages/splash.dart";
 import "package:flutter_app/configs/config.dart";
+import "package:flutter_app/provider/theme_provider.dart";
 import "package:fluwx/fluwx.dart" as fluwx;
+import "package:provider/provider.dart";
 
 void main() {
     runApp(App());
@@ -18,9 +20,14 @@ class App extends StatelessWidget {
 
     @override
     Widget build(BuildContext context) {
-        return MaterialApp(
-            title: Config.APP_NAME,
-            home: Splash()
+        return MultiProvider(
+            providers: [
+                ChangeNotifierProvider(builder: (_) => ThemeProvider()),
+            ],
+            child: MaterialApp(
+                title: Config.APP_NAME,
+                home: Splash()
+            )
         );
     }
 }

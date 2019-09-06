@@ -3,7 +3,7 @@ import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout/layout_behaviors.dart";
 import "package:flutter_app/controllers/site_controller.dart";
-import "package:flutter_app/models/advice.dart";
+import "package:flutter_app/models/advice_model.dart";
 import "package:flutter_app/models/layout/carousel_model.dart";
 import "package:flutter_swiper/flutter_swiper.dart";
 
@@ -17,7 +17,7 @@ class Carousel extends StatefulWidget {
 }
 
 class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeepAliveClientMixin<Carousel> {
-	List<Advice> _advices;
+	List<AdviceModel> _advices;
 	int curIndex = 0;
 
 	_CarouselState();
@@ -33,7 +33,7 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 		//TODO 加载中样式
 		if (this._advices == null) {
 			return Container(
-				width: Utils.px2dp(750),
+				width: Utils.px2dp(Utils.DESIGN_WIDTH),
 				height: Utils.px2dp(400),
 				child: Center(
 					child: Text("正在加载中…")
@@ -53,15 +53,15 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 						duration: 500,
 						itemCount: this._advices.length,
 						itemBuilder: (BuildContext context, int index) {
-							Advice advice = this._advices[index];
+							AdviceModel adviceModel = this._advices[index];
 							return FadeInImage.assetNetwork(
-									image: advice.picUrl,
+									image: adviceModel.picUrl,
 									placeholder: "assets/images/loading.gif",
-									width: Utils.px2dp(advice.width),
-									height: Utils.px2dp(advice.height)
+									width: Utils.px2dp(adviceModel.width),
+									height: Utils.px2dp(adviceModel.height)
 							);
 						},
-						onTap: (int index) => this.onTap(context, this._advices[index]),
+						onTap: (int index) => this.onTap(context, link: this._advices[index].link),
 						onIndexChanged: (int index) {
 							this.setState(() => this.curIndex = index);
 						}
@@ -79,7 +79,7 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 		return Positioned(
 			bottom: Utils.px2dp(20),
 			left: 0,
-			width: Utils.px2dp(750),
+			width: Utils.px2dp(Utils.DESIGN_WIDTH),
 			child: Row(
 				mainAxisAlignment: MainAxisAlignment.center,
 				crossAxisAlignment: CrossAxisAlignment.center,
@@ -107,7 +107,7 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 	}
 
 	void getAdList() async {
-		List<Advice> advices = await SiteController.getAdList(widget._carouselModel.code);
+		List<AdviceModel> advices = await SiteController.getAdList(widget._carouselModel.code);
 		if (advices == null) {
 			return;
 		}

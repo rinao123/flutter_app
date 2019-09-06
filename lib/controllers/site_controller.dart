@@ -1,6 +1,6 @@
 import "package:dio/dio.dart";
 import "package:flutter_app/apis/site_api.dart";
-import "package:flutter_app/models/advice.dart";
+import "package:flutter_app/models/advice_model.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
 
 class SiteController {
@@ -29,7 +29,7 @@ class SiteController {
 		return LayoutModel.fromJson(response.data);
 	}
 
-	static Future<List<Advice>> getAdList(String code) async {
+	static Future<List<AdviceModel>> getAdList(String code) async {
 		Response response = await SiteApi.getAdList(code);
 		if (response == null) {
 			return null;
@@ -38,10 +38,10 @@ class SiteController {
 			print("getAdList fail:${response.data["msg"]}");
 			return null;
 		}
-		List<Advice> advices = [];
+		List<AdviceModel> advices = [];
 		for (Map<String, dynamic> ad in response.data["ads"]) {
-			Advice advice = Advice.fromJson(ad);
-			advices.add(advice);
+			AdviceModel adviceModel = AdviceModel.fromJson(ad);
+			advices.add(adviceModel);
 		}
 		return advices;
 	}

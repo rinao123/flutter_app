@@ -1,6 +1,6 @@
 import "package:money/money.dart";
 
-class Goods {
+class GoodsModel {
 	int _id;
 	String _name;
 	String _subTitle;
@@ -21,7 +21,6 @@ class Goods {
 	bool _isPresell;
 	int _arrivalTime;
 	bool _isDistributionSuit;
-	List<String> _goodsTags;
 
 	int get id => this._id;
 	set id(int id) => this._id = id;
@@ -83,52 +82,44 @@ class Goods {
 	bool get isDistributionSuit => this._isDistributionSuit;
 	set isDistributionSuit(bool isDistributionSuit) => this._isDistributionSuit = isDistributionSuit;
 
-	List<String> get goodsTags => this._goodsTags;
-	set goodsTags(List<String> goodsTags) => this._goodsTags = goodsTags;
-
-	static Goods fromJson(Map<String, dynamic> json) {
-		Goods goods = Goods();
-		goods.id = json["id"];
-		goods.name = json["goods_name"];
-		goods.subTitle = json["sub_title"];
-		goods.introduction = json["introduction"];
-		goods.picture = json["picture"];
-		goods.banner = json["banner"];
+	static GoodsModel fromJson(Map<String, dynamic> json) {
+		GoodsModel goodsModel = GoodsModel();
+		goodsModel.id = json["id"];
+		goodsModel.name = json["goods_name"];
+		goodsModel.subTitle = json["sub_title"];
+		goodsModel.introduction = json["introduction"];
+		goodsModel.picture = json["picture"];
+		goodsModel.banner = json["banner"];
 		if (json["price"] is int) {
 			json["price"] = json["price"].toDouble();
 		}
-		goods.price = Money.fromDouble(json["price"], Currency("CNY"));
+		goodsModel.price = Money.fromDouble(json["price"], Currency("CNY"));
 		if (json["promotion_price"] is int) {
 			json["promotion_price"] = json["promotion_price"].toDouble();
 		}
-		goods.promotionPrice = Money.fromDouble(json["promotion_price"], Currency("CNY"));
-		goods.state = json["state"];
-		goods.stock = json["stock"];
-		goods.pintuanNum = json["pintuan_num"];
+		goodsModel.promotionPrice = Money.fromDouble(json["promotion_price"], Currency("CNY"));
+		goodsModel.state = json["state"];
+		goodsModel.stock = json["stock"];
+		goodsModel.pintuanNum = json["pintuan_num"];
 		if (json["pintuan_price"] is int) {
 			json["pintuan_price"] = json["pintuan_price"].toDouble();
 		}
-		goods.pintuanPrice = Money.fromDouble(json["pintuan_price"], Currency("CNY"));
-		goods.sales = json["sales"];
-		goods.shares = json["shares"];
+		goodsModel.pintuanPrice = Money.fromDouble(json["pintuan_price"], Currency("CNY"));
+		goodsModel.sales = json["sales"];
+		goodsModel.shares = json["shares"];
 		if (json["commission"] is int) {
 			json["commission"] = json["commission"].toDouble();
 		}
-		goods.commission = Money.fromDouble(json["commission"], Currency("CNY"));
-		goods.promotionState = json["promotion_state"];
-		goods.positiveRating = json["positive_rating"];
-		goods.isPresell = json["is_presell"];
-		goods.arrivalTime = json["arrival_time"];
+		goodsModel.commission = Money.fromDouble(json["commission"], Currency("CNY"));
+		goodsModel.promotionState = json["promotion_state"];
+		goodsModel.positiveRating = json["positive_rating"];
+		goodsModel.isPresell = json["is_presell"];
+		goodsModel.arrivalTime = json["arrival_time"];
 		if (json["is_distribution_suit"] is int) {
 			json["is_distribution_suit"] = json["is_distribution_suit"] > 0;
 		}
-		goods.isDistributionSuit = json["is_distribution_suit"];
-		List<String> goodsTags = [];
-		for (dynamic goodsTag in json["goods_tags"]) {
-			goodsTags.add(goodsTag.toString());
-		}
-		goods.goodsTags = goodsTags;
-		return goods;
+		goodsModel.isDistributionSuit = json["is_distribution_suit"];
+		return goodsModel;
 	}
 
 	Map<String, dynamic> toJson(){
@@ -152,8 +143,7 @@ class Goods {
 			"positive_rating": this.positiveRating,
 			"is_presell": this.isPresell,
 			"arrival_time": this.arrivalTime,
-			"is_distribution_suit": this.isDistributionSuit,
-			"goods_tags": this.goodsTags,
+			"is_distribution_suit": this.isDistributionSuit
 		};
 	}
 }

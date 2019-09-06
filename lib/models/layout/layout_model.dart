@@ -69,6 +69,7 @@ class LayoutModel {
 			case "icons":
 				return IconsModel.fromJson(item);
 			case "goods_list":
+				GoodsListModel goodsListModel = GoodsListModel.fromJson(item);
 				return GoodsListModel.fromJson(item);
 			case "search":
 				return SearchModel.fromJson(item);

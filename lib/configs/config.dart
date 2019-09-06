@@ -1,7 +1,9 @@
 class Config {
     static const String APP_NAME = "优米共享";
-    static const String APP_KEY = "fa5228891d96458e53fa2d9b10899c6d";
-    static const String GATEWAY = "https://gateway.umi666.com";
+    static const String APP_KEY = "f44554b21307902bd2dd918a355d10a6";
+    static const String GATEWAY = "https://gateway.test.iyunlai.cn";
+    static const String MAIN_COLOR = "#333333";
+    static const String SECONDARY_COLOR = "#EA1D1D";
     static const Map<String, dynamic> TAB_BAR = {
         "backgroundColor": "#FFFFFF",
         "borderStyle": "#FFFFFF",

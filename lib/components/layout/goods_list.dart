@@ -1,239 +1,100 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
-import "package:flutter_app/common/navigation_helper.dart";
 import "package:flutter_app/common/utils.dart";
+import "package:flutter_app/components/layout/base_goods_list.dart";
 import "package:flutter_app/components/layout/layout_behaviors.dart";
+import "package:flutter_app/components/layout/list_layout.dart";
 import "package:flutter_app/controllers/goods_controller.dart";
-import "package:flutter_app/models/goods.dart";
+import "package:flutter_app/models/goods_model.dart";
+import "package:flutter_app/models/layout/base_goods_list_model.dart";
 import "package:flutter_app/models/layout/goods_list_model.dart";
 
 class GoodsList extends StatefulWidget {
-	final GoodsListModel _goodsListModel;
+	final GoodsListModel goodsListModel;
 
-	GoodsList(this._goodsListModel);
+	GoodsList(this.goodsListModel, {Key key}) : super(key: key);
 
 	@override
-	State<StatefulWidget> createState() {
-		return _GoodsListState(this._goodsListModel);
-	}
+	State<StatefulWidget> createState() => GoodsListState();
 }
 
-class _GoodsListState extends State<GoodsList> with LayoutBehaviors, AutomaticKeepAliveClientMixin<GoodsList> {
-	GoodsListModel _goodsListModel;
-	List _goodsList;
+class GoodsListState extends State<GoodsList> with LayoutBehaviors, AutomaticKeepAliveClientMixin<GoodsList> implements ListLayout {
 	int _page;
-	int _pageSize;
-
-	_GoodsListState(this._goodsListModel);
+	List _goodsList;
+	bool _isShowLoading;
+	bool _isReachBottom;
+	bool _isGoodsListReachBottom;
 
 	@override
 	void initState() {
 		super.initState();
 		this._page = 1;
-		this._pageSize = 10;
-		this.getGoodsList();
+		this._isShowLoading = false;
+		this._isReachBottom = false;
+		this._getGoodsList(1);
 	}
 
 	@override
 	Widget build(BuildContext context) {
 		if (this._goodsList == null) {
 			return Container(
-				width: Utils.px2dp(750),
+				width: Utils.px2dp(Utils.DESIGN_WIDTH),
 				height: Utils.px2dp(100),
 				child: Center(
 					child: Text("正在加载中…")
 				)
 			);
 		}
-		if (this._goodsListModel.type == 1) {
-			return this._buildGoodsList1();
-		} else if (this._goodsListModel.type == 2) {
-			return this._buildGoodsList2();
-		} else if (this._goodsListModel.type == 3) {
-			return this._buildGoodsList3();
-		} else {
-			print("unknown goodsList type");
-			return Container();
-		}
+		BaseGoodsListModel baseGoodsListModel = BaseGoodsListModel();
+		baseGoodsListModel.type = widget.goodsListModel.type;
+		baseGoodsListModel.goodsStyle = widget.goodsListModel.goodsStyle;
+		baseGoodsListModel.pageMargin = widget.goodsListModel.pageMargin;
+		baseGoodsListModel.goodsMargin = widget.goodsListModel.goodsMargin;
+		baseGoodsListModel.borderRadius = widget.goodsListModel.borderRadius;
+		baseGoodsListModel.pictureScale = widget.goodsListModel.pictureScale;
+		baseGoodsListModel.bold = widget.goodsListModel.bold;
+		baseGoodsListModel.textAlign = widget.goodsListModel.textAlign;
+		baseGoodsListModel.isShowGoodsName = widget.goodsListModel.isShowGoodsName;
+		baseGoodsListModel.isShowSubTitle = widget.goodsListModel.isShowSubTitle;
+		baseGoodsListModel.isShowPrice = widget.goodsListModel.isShowPrice;
+		baseGoodsListModel.btn = widget.goodsListModel.btn;
+		baseGoodsListModel.btnTitle = widget.goodsListModel.btnTitle;
+		baseGoodsListModel.corner = widget.goodsListModel.corner;
+		baseGoodsListModel.cornerWidth = widget.goodsListModel.cornerWidth;
+		baseGoodsListModel.cornerHeight = widget.goodsListModel.cornerHeight;
+		baseGoodsListModel.goodsList = this._goodsList;
+		baseGoodsListModel.isShowLoading = this._isShowLoading;
+		baseGoodsListModel.isReachBottom = this._isGoodsListReachBottom;
+		return BaseGoodsList(baseGoodsListModel);
 	}
 
-	Widget _buildGoodsList1() {
-		return Container();
-	}
-
-	Widget _buildGoodsList2() {
-		return Container(
-			width: Utils.px2dp(750),
-			child: Center(
-				child: Wrap(
-					children: this._buildGoodsItems2()
-				)
-			)
-		);
-	}
-
-	List<Widget> _buildGoodsItems2() {
-		List<Widget> items = [];
-		for (int i = 0; i < this._goodsList.length; i++) {
-			items.add(Column(
-				children: this._buildGoodsItem2(i),
-			));
-			if (i % 2 == 0) {
-				items.add(Padding(padding: EdgeInsets.only(right: Utils.px2dp(10))));
-			}
-		}
-		return items;
-	}
-
-	List<Widget> _buildGoodsItem2(index) {
-		Goods goods = this._goodsList[index];
-		List<Widget> items = [];
-		items.add(InkWell(
-			child: Container(
-				width: Utils.px2dp(360),
-				height: Utils.px2dp(556),
-				color: Utils.getColorFromString("#ffffff"),
-				child: Stack(
-					children: <Widget>[
-						this._buildPicture2(goods.picture),
-						this._buildName2(goods.name),
-						this._buildSales2(goods.sales),
-						this._buildPrice2(goods)
-					],
-				)
-			),
-			onTap: () => NavigationHelper.navigateTo(context, "/pages/goods_detail/goods_detail?id=${goods.id}")
-		));
-		if ((this._goodsList.length % 2 == 0 && index < this._goodsList.length - 2) || (this._goodsList.length % 2 == 1 && index < this._goodsList.length - 1)) {
-			items.add(Padding(padding: EdgeInsets.only(bottom: Utils.px2dp(10))));
-		}
-		return items;
-	}
-
-	Widget _buildPicture2(String picture) {
-		return Positioned(
-			top: 0,
-			left: 0,
-			child: FadeInImage.assetNetwork(
-				image: picture,
-				placeholder: "assets/images/loading.gif",
-				width: Utils.px2dp(360),
-				height: Utils.px2dp(360)
-			),
-		);
-	}
-
-	Widget _buildName2(String name) {
-		return Positioned(
-			top: Utils.px2dp(370),
-			left: Utils.px2dp(10),
-			child: Container(
-				width: Utils.px2dp(340),
-				child: Text(
-					name,
-					style: TextStyle(
-						fontSize: Utils.px2dp(28),
-						color: Utils.getColorFromString("#333333")
-					),
-					softWrap: true,
-					maxLines: 2,
-					overflow: TextOverflow.ellipsis,
-				)
-			)
-		);
-	}
-
-	Widget _buildSales2(int sales) {
-		return Positioned(
-			top: Utils.px2dp(468),
-			left: Utils.px2dp(10),
-			child: Container(
-				width: Utils.px2dp(340),
-				child: Text(
-					"已抢：$sales件",
-					style: TextStyle(
-						fontSize: Utils.px2dp(24),
-						color: Utils.getColorFromString("#333333")
-					)
-				)
-			)
-		);
-	}
-
-	Widget _buildPrice2(Goods goods) {
-		String price = goods.pintuanNum > 0 ? goods.pintuanPrice.amountAsString : goods.promotionPrice.amountAsString;
-		return Positioned(
-			top: Utils.px2dp(502),
-			left: Utils.px2dp(10),
-			child: Row(
-				mainAxisAlignment: MainAxisAlignment.center,
-				children: <Widget>[
-					Text(
-						"¥$price",
-						style: TextStyle(
-							fontSize: Utils.px2dp(32),
-							fontWeight: FontWeight.bold,
-							color: Utils.getColorFromString("#D4001A")
-						)
-					),
-					Padding(padding: EdgeInsets.only(right: Utils.px2dp(10))),
-					Container(
-						width: Utils.px2dp(32),
-						height: Utils.px2dp(28),
-						decoration: BoxDecoration(
-							color: Utils.getColorFromString("#2F2F2F"),
-							borderRadius: BorderRadius.only(topLeft: Radius.circular(Utils.px2dp(4)), bottomLeft: Radius.circular(Utils.px2dp(4)))
-						),
-						child: Center(
-							child: Text(
-								"送",
-								style: TextStyle(
-									fontSize: Utils.px2dp(20),
-									fontWeight: FontWeight.bold,
-									color: Utils.getColorFromString("#FFFFFF")
-								)
-							)
-						)
-					),
-					Container(
-						height: Utils.px2dp(28),
-						decoration: BoxDecoration(
-							color: Utils.getColorFromString("#DFC77F"),
-							borderRadius: BorderRadius.only(topRight: Radius.circular(Utils.px2dp(4)), bottomRight: Radius.circular(Utils.px2dp(4)))
-						),
-						child: Row(
-							mainAxisAlignment: MainAxisAlignment.center,
-							children: <Widget>[
-								Padding(padding: EdgeInsets.only(right: Utils.px2dp(6))),
-								Text(
-									"${Utils.removeNumEndZero(goods.commission.amountAsString)}点",
-									style: TextStyle(
-										fontSize: Utils.px2dp(20),
-										fontWeight: FontWeight.bold,
-										color: Utils.getColorFromString("#2F2F2F")
-									)
-								),
-								Padding(padding: EdgeInsets.only(right: Utils.px2dp(6))),
-							]
-						)
-					)
-				]
-			)
-		);
-	}
-
-	Widget _buildGoodsList3() {
-		return Container();
-	}
-
-	void getGoodsList() async {
-		List<Goods> goodsList = await GoodsController.getGoodsList(this._goodsListModel.src, this._page, this._pageSize);
+	void _getGoodsList(int page) async {
+		List<GoodsModel> goodsList = await GoodsController.getGoodsList(widget.goodsListModel.src, page, widget.goodsListModel.pageSize);
 		if (goodsList == null) {
 			return;
 		}
-		this.setState(() => this._goodsList = goodsList);
+		this._page = page;
+		if (goodsList.length == widget.goodsListModel.pageSize) {
+			this._page++;
+		}
+		this.setState(() {
+			if (page == 1) {
+				this._goodsList = goodsList;
+			} else {
+				this._goodsList.addAll(goodsList);
+			}
+			this._isShowLoading = !widget.goodsListModel.isLoadingControlByPage || widget.goodsListModel.type == 6;
+			this._isGoodsListReachBottom = goodsList.length < widget.goodsListModel.pageSize;
+		});
 	}
 
 	@override
 	bool get wantKeepAlive => true;
+
+	@override
+	void onReachBottom() {
+		if (this._isReachBottom) {
+			this._getGoodsList(this._page);
+		}
+	}
 }

@@ -1,36 +1,39 @@
 import "package:flutter/material.dart";
+import "package:flutter/rendering.dart";
 import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
-import 'package:flutter_app/components/layout.dart';
+import "package:flutter_app/components/layout.dart";
 import "package:flutter_app/components/page_status.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
 
 class LayoutPage extends StatefulWidget {
 
-	final String _code;
+	final String code;
 
-	LayoutPage(this._code);
+	LayoutPage(this.code);
 
 	@override
-	State<StatefulWidget> createState() {
-		return _LayoutPageState(this._code);
-	}
+	State<StatefulWidget> createState() => _LayoutPageState();
 }
 
 class _LayoutPageState extends State<LayoutPage> {
-	String _code;
 	LayoutModel _layoutModel;
-
-	_LayoutPageState(String code) {
-		this._code = code;
-	}
+	ScrollController _scrollController;
+	bool _isLoading;
+	bool _isReachBottom;
+	Layout _layout;
+	GlobalKey<LayoutState> _layoutStateKey;
 
 	@override
 	void initState() {
 		super.initState();
-		this.getLayouts();
+		this._scrollController = ScrollController();
+		this._scrollController.addListener(this._onPageScroll);
+		this._isLoading = false;
+		this._isReachBottom = false;
+		this._getLayouts();
 	}
 
 	@override
@@ -60,12 +63,15 @@ class _LayoutPageState extends State<LayoutPage> {
 	}
 
 	Widget _buildBody() {
+		this._layoutStateKey = GlobalKey<LayoutState>();
+		this._layout = Layout(this._layoutModel.modules, key: this._layoutStateKey);
 		return Container(
 			color: Utils.getColorFromString("#F5F5F5"),
 			child: RefreshIndicator(
 				onRefresh: this._onRefresh,
 				child: SingleChildScrollView(
-					child: Layout(this._layoutModel.modules)
+					controller: this._scrollController,
+					child: this._layout
 				)
 			)
 		);
@@ -73,11 +79,26 @@ class _LayoutPageState extends State<LayoutPage> {
 
 	Future<void> _onRefresh() async {
 		this.setState(() => this._layoutModel = null);
-		this.getLayouts();
+		this._getLayouts();
 	}
 
-	void getLayouts() async {
-		LayoutModel layoutModel = await SiteController.getLayoutByCode(this._code);
+	void _onPageScroll() {
+		if (this._scrollController.position.userScrollDirection == ScrollDirection.reverse && this._scrollController.offset >= this._scrollController.position.maxScrollExtent - 50 && !this._isLoading) {
+			this._onReachBottom();
+		}
+	}
+
+	void _onReachBottom() {
+		if (this._isReachBottom) {
+			return;
+		}
+		if (this._layoutStateKey != null) {
+			this._layoutStateKey.currentState.onReachBottom();
+		}
+	}
+
+	void _getLayouts() async {
+		LayoutModel layoutModel = await SiteController.getLayoutByCode(widget.code);
 		if (layoutModel == null) {
 			return;
 		}

@@ -23,9 +23,11 @@ class HttpHelper {
             options = Options();
         }
         options.headers["appkey"] = Config.APP_KEY;
-        if (_skey != null && _skey.isNotEmpty) {
-            options.headers["X-WX-Skey"] = _skey;
+        if (_skey == null || _skey.isEmpty) {
+            String skey = await Utils.getSkey();
+            setSkey(skey);
         }
+        options.headers["X-WX-Skey"] = _skey;
         Utils.getDeviceInfo();
         Dio dio = _getInstance();
         try {

@@ -35,7 +35,7 @@ class _LoginState extends State<Login> {
                     children: <Widget>[
                         Image(
                             image: AssetImage("assets/images/login.jpg"),
-                            width: Utils.px2dp(750),
+                            width: Utils.px2dp(Utils.DESIGN_WIDTH),
                             fit: BoxFit.fitWidth,
                             alignment: Alignment.topCenter
                         ),
