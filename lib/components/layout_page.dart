@@ -20,19 +20,12 @@ class LayoutPage extends StatefulWidget {
 
 class _LayoutPageState extends State<LayoutPage> {
 	LayoutModel _layoutModel;
-	ScrollController _scrollController;
-	bool _isLoading;
-	bool _isReachBottom;
 	Layout _layout;
 	GlobalKey<LayoutState> _layoutStateKey;
 
 	@override
 	void initState() {
 		super.initState();
-		this._scrollController = ScrollController();
-		this._scrollController.addListener(this._onPageScroll);
-		this._isLoading = false;
-		this._isReachBottom = false;
 		this._getLayouts();
 	}
 
@@ -69,10 +62,7 @@ class _LayoutPageState extends State<LayoutPage> {
 			color: Utils.getColorFromString("#F5F5F5"),
 			child: RefreshIndicator(
 				onRefresh: this._onRefresh,
-				child: SingleChildScrollView(
-					controller: this._scrollController,
-					child: this._layout
-				)
+				child: this._layout
 			)
 		);
 	}
@@ -80,21 +70,6 @@ class _LayoutPageState extends State<LayoutPage> {
 	Future<void> _onRefresh() async {
 		this.setState(() => this._layoutModel = null);
 		this._getLayouts();
-	}
-
-	void _onPageScroll() {
-		if (this._scrollController.position.userScrollDirection == ScrollDirection.reverse && this._scrollController.offset >= this._scrollController.position.maxScrollExtent - 50 && !this._isLoading) {
-			this._onReachBottom();
-		}
-	}
-
-	void _onReachBottom() {
-		if (this._isReachBottom) {
-			return;
-		}
-		if (this._layoutStateKey != null) {
-			this._layoutStateKey.currentState.onReachBottom();
-		}
 	}
 
 	void _getLayouts() async {

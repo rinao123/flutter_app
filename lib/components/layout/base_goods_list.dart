@@ -6,6 +6,7 @@ import "package:flutter_app/models/goods_model.dart";
 import "package:flutter_app/models/layout/base_goods_list_model.dart";
 import "package:flutter_app/models/theme_model.dart";
 import "package:flutter_app/provider/theme_provider.dart";
+import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
 import "package:provider/provider.dart";
 
 class BaseGoodsList extends StatelessWidget with LayoutBehaviors {
@@ -15,11 +16,19 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviors {
 
 	@override
 	Widget build(BuildContext context) {
+		int numPerLine = this._getNumPerLine(0);
+		List<Widget> items = this._buildItems(context);
 		return Container(
-			margin: EdgeInsets.symmetric(horizontal: Utils.px2dp(
-				this._baseGoodsListModel.pageMargin)),
-			child: Wrap(
-				children: this._buildItems(context)
+			margin: EdgeInsets.symmetric(horizontal: Utils.px2dp(this._baseGoodsListModel.pageMargin)),
+			child: StaggeredGridView.countBuilder(
+				shrinkWrap: true,
+				physics: NeverScrollableScrollPhysics(),
+				crossAxisCount: numPerLine,
+				itemCount: items.length,
+				itemBuilder: (BuildContext context, int index) {
+					return items[index];
+				},
+				staggeredTileBuilder: (int index) => StaggeredTile.fit(1)
 			)
 		);
 	}
