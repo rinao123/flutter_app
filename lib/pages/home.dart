@@ -65,8 +65,8 @@ class _HomeState extends State<Home> {
         Color color = Utils.getColorFromString(index == this._curIndex ? item["selectedColor"] : item["color"]);
         FontWeight fontWeight = index == this._curIndex ? FontWeight.bold : FontWeight.normal;
         return BottomNavigationBarItem(
-            icon: Image(
-                image: AssetImage(iconPath),
+            icon: Image.asset(
+                iconPath,
                 width: Utils.px2dp(64),
                 height: Utils.px2dp(64)
             ),

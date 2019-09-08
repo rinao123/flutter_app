@@ -36,8 +36,8 @@ class _SearchState extends State<Search> {
 							crossAxisAlignment: CrossAxisAlignment.center,
 							children: <Widget>[
 								Padding(padding: EdgeInsets.only(right: Utils.px2dp(16))),
-								Image(
-									image: AssetImage("assets/images/search_icon.png"),
+								Image.asset(
+									"assets/images/search_icon.png",
 									width: Utils.px2dp(26),
 									height: Utils.px2dp(26)
 								),

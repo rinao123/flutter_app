@@ -19,11 +19,10 @@ class _SplashState extends State<Splash> {
 
     @override
     Widget build(BuildContext context) {
-
         return Scaffold(
             body: OverflowBox(
-                child: Image(
-                    image: AssetImage("assets/images/splash.jpg"),
+                child: Image.asset(
+                    "assets/images/splash.jpg",
                     width: Utils.px2dp(Utils.DESIGN_WIDTH),
                     fit: BoxFit.fitWidth,
                     alignment: Alignment.topCenter

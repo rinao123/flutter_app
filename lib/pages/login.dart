@@ -33,8 +33,8 @@ class _LoginState extends State<Login> {
             body: OverflowBox(
                 child: Stack(
                     children: <Widget>[
-                        Image(
-                            image: AssetImage("assets/images/login.jpg"),
+                        Image.asset(
+                            "assets/images/login.jpg",
                             width: Utils.px2dp(Utils.DESIGN_WIDTH),
                             fit: BoxFit.fitWidth,
                             alignment: Alignment.topCenter

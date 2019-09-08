@@ -21,8 +21,8 @@ class Loading extends StatelessWidget {
 				)
 			);
 		} else {
-			content = Image(
-				image: AssetImage("assets/images/loading.gif"),
+			content = Image.asset(
+				"assets/images/loading.gif",
 				width: Utils.px2dp(64),
 				height: Utils.px2dp(64)
 			);

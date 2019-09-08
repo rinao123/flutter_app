@@ -31,39 +31,40 @@ class _LayoutPageState extends State<LayoutPage> {
 
 	@override
 	Widget build(BuildContext context) {
-		if (this._layoutModel == null) {
-			return Scaffold(
-				appBar: AppBar(
-					backgroundColor: Utils.getColorFromString("#ffffff"),
-					brightness: Brightness.light,
-          			iconTheme: IconThemeData(color: Colors.white)
-				),
-				body: PageStatus()
-			);
-		}
 		return Scaffold(
-			appBar: AppBar(
-				backgroundColor: Utils.getColorFromString(this._layoutModel.backgroundColor),
-				brightness: Brightness.light,
-				iconTheme: IconThemeData(color: Colors.black),
-				title: Text(
-					this._layoutModel.title,
-					style: TextStyle(color: Utils.getColorFromString(this._layoutModel.frontColor))
+			body: RefreshIndicator(
+				child: CustomScrollView(
+					slivers: <Widget>[
+						this._buildHeader(),
+						this._buildBody()
+					]
 				),
+				onRefresh: this._onRefresh
+			)
+		);
+	}
+
+	Widget _buildHeader() {
+		String backgroundColor = this._layoutModel == null ? "#ffffff" : this._layoutModel.backgroundColor;
+		String titleColor = this._layoutModel == null ? "#000000" : this._layoutModel.frontColor;
+		String title = this._layoutModel == null ? "" : this._layoutModel.title;
+		return SliverAppBar(
+			backgroundColor: Utils.getColorFromString(backgroundColor),
+			brightness: Brightness.light,
+			iconTheme: IconThemeData(color: Colors.black),
+			title: Text(
+				title,
+				style: TextStyle(color: Utils.getColorFromString(titleColor))
 			),
-			body: this._buildBody()
+			pinned: true
 		);
 	}
 
 	Widget _buildBody() {
 		this._layoutStateKey = GlobalKey<LayoutState>();
 		this._layout = Layout(this._layoutModel.modules, key: this._layoutStateKey);
-		return Container(
-			color: Utils.getColorFromString("#F5F5F5"),
-			child: RefreshIndicator(
-				onRefresh: this._onRefresh,
-				child: this._layout
-			)
+		return SliverToBoxAdapter(
+			child: this._layout
 		);
 	}
 

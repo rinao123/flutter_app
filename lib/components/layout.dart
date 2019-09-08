@@ -16,7 +16,7 @@ class Layout extends StatefulWidget {
 	final List<BaseModel> modules;
 	final bool isChild;
 
-	Layout(this.modules, {Key key, this.isChild = false}) : super(key: key);
+	Layout(this.modules, {Key key, this.isChild = true}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => LayoutState();

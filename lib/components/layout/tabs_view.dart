@@ -3,7 +3,6 @@ import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
-import "package:flutter_app/components/page_status.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
 import "package:flutter_app/models/layout/tabs_view_model.dart";
@@ -68,8 +67,8 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 			width: Utils.px2dp(Utils.DESIGN_WIDTH),
 			height: Utils.px2dp(60),
 			decoration: BoxDecoration(
-				color: Utils.getColorFromString("#ffffff"),
-				border: Border(bottom: BorderSide(color: Utils.getColorFromString("#f1f1f1")))
+					color: Utils.getColorFromString("#ffffff"),
+					border: Border(bottom: BorderSide(color: Utils.getColorFromString("#f1f1f1")))
 			),
 			child: TabBar(
 				isScrollable: true,

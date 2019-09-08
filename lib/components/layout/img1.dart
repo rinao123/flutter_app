@@ -29,8 +29,8 @@ class Img1 extends StatelessWidget with LayoutBehaviors {
 					),
 					child: ClipRRect(
 						borderRadius: BorderRadius.circular(Utils.px2dp(this._img1Model.borderRadius)),
-						child: Image(
-							image: NetworkImage(this._img1Model.img),
+						child: Image.network(
+							this._img1Model.img,
 							width: Utils.px2dp(this._img1Model.width),
 							height: Utils.px2dp(this._img1Model.height),
 							fit: BoxFit.fill

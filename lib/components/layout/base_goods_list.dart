@@ -112,8 +112,8 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviors {
 			child: Container(
 				child: ClipRRect(
 					borderRadius: BorderRadius.vertical(top: Radius.circular(Utils.px2dp(this._baseGoodsListModel.borderRadius))),
-					child: Image(
-						image: NetworkImage(goods.picture),
+					child: Image.network(
+						goods.picture,
 						width: Utils.px2dp(width),
 						height: Utils.px2dp(width),
 						fit: BoxFit.contain
