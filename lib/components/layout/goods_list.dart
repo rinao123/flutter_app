@@ -10,23 +10,26 @@ import "package:flutter_app/models/layout/base_goods_list_model.dart";
 import "package:flutter_app/models/layout/goods_list_model.dart";
 
 class GoodsList extends StatefulWidget {
-	final GoodsListModel goodsListModel;
+	final GoodsListModel model;
 
-	GoodsList(this.goodsListModel, {Key key}) : super(key: key);
+	GoodsList({Key key, @required this.model}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => GoodsListState();
 }
 
-class GoodsListState extends State<GoodsList> with LayoutBehaviors, AutomaticKeepAliveClientMixin<GoodsList> implements ListLayout {
+class GoodsListState extends State<GoodsList> with LayoutBehaviors implements ListLayout {
 	int _page;
 	List _goodsList;
 	bool _isShowLoading;
 	bool _isReachBottom;
 	bool _isGoodsListReachBottom;
 
+	bool get isReachBottom => this._isReachBottom;
+
 	@override
 	void initState() {
+		print("goodsList initState");
 		super.initState();
 		this._page = 1;
 		this._isShowLoading = false;
@@ -47,22 +50,22 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviors, AutomaticKee
 			);
 		}
 		BaseGoodsListModel baseGoodsListModel = BaseGoodsListModel();
-		baseGoodsListModel.type = widget.goodsListModel.type;
-		baseGoodsListModel.goodsStyle = widget.goodsListModel.goodsStyle;
-		baseGoodsListModel.pageMargin = widget.goodsListModel.pageMargin;
-		baseGoodsListModel.goodsMargin = widget.goodsListModel.goodsMargin;
-		baseGoodsListModel.borderRadius = widget.goodsListModel.borderRadius;
-		baseGoodsListModel.pictureScale = widget.goodsListModel.pictureScale;
-		baseGoodsListModel.bold = widget.goodsListModel.bold;
-		baseGoodsListModel.textAlign = widget.goodsListModel.textAlign;
-		baseGoodsListModel.isShowGoodsName = widget.goodsListModel.isShowGoodsName;
-		baseGoodsListModel.isShowSubTitle = widget.goodsListModel.isShowSubTitle;
-		baseGoodsListModel.isShowPrice = widget.goodsListModel.isShowPrice;
-		baseGoodsListModel.btn = widget.goodsListModel.btn;
-		baseGoodsListModel.btnTitle = widget.goodsListModel.btnTitle;
-		baseGoodsListModel.corner = widget.goodsListModel.corner;
-		baseGoodsListModel.cornerWidth = widget.goodsListModel.cornerWidth;
-		baseGoodsListModel.cornerHeight = widget.goodsListModel.cornerHeight;
+		baseGoodsListModel.type = widget.model.type;
+		baseGoodsListModel.goodsStyle = widget.model.goodsStyle;
+		baseGoodsListModel.pageMargin = widget.model.pageMargin;
+		baseGoodsListModel.goodsMargin = widget.model.goodsMargin;
+		baseGoodsListModel.borderRadius = widget.model.borderRadius;
+		baseGoodsListModel.pictureScale = widget.model.pictureScale;
+		baseGoodsListModel.bold = widget.model.bold;
+		baseGoodsListModel.textAlign = widget.model.textAlign;
+		baseGoodsListModel.isShowGoodsName = widget.model.isShowGoodsName;
+		baseGoodsListModel.isShowSubTitle = widget.model.isShowSubTitle;
+		baseGoodsListModel.isShowPrice = widget.model.isShowPrice;
+		baseGoodsListModel.btn = widget.model.btn;
+		baseGoodsListModel.btnTitle = widget.model.btnTitle;
+		baseGoodsListModel.corner = widget.model.corner;
+		baseGoodsListModel.cornerWidth = widget.model.cornerWidth;
+		baseGoodsListModel.cornerHeight = widget.model.cornerHeight;
 		baseGoodsListModel.goodsList = this._goodsList;
 		baseGoodsListModel.isShowLoading = this._isShowLoading;
 		baseGoodsListModel.isReachBottom = this._isGoodsListReachBottom;
@@ -70,12 +73,12 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviors, AutomaticKee
 	}
 
 	void _getGoodsList(int page) async {
-		List<GoodsModel> goodsList = await GoodsController.getGoodsList(widget.goodsListModel.src, page, widget.goodsListModel.pageSize);
+		List<GoodsModel> goodsList = await GoodsController.getGoodsList(widget.model.src, page, widget.model.pageSize);
 		if (goodsList == null) {
 			return;
 		}
 		this._page = page;
-		if (goodsList.length == widget.goodsListModel.pageSize) {
+		if (goodsList.length == widget.model.pageSize) {
 			this._page++;
 		}
 		this.setState(() {
@@ -84,18 +87,16 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviors, AutomaticKee
 			} else {
 				this._goodsList.addAll(goodsList);
 			}
-			this._isShowLoading = !widget.goodsListModel.isLoadingControlByPage || widget.goodsListModel.type == 6;
-			this._isGoodsListReachBottom = goodsList.length < widget.goodsListModel.pageSize;
+			this._isShowLoading = !widget.model.isLoadingControlByPage || widget.model.type == 6;
+			this._isGoodsListReachBottom = goodsList.length < widget.model.pageSize;
 		});
 	}
 
 	@override
-	bool get wantKeepAlive => true;
-
-	@override
 	void onReachBottom() {
-		if (!this._isGoodsListReachBottom) {
-			this._getGoodsList(this._page);
+		if (this._isGoodsListReachBottom) {
+			return;
 		}
+		this._getGoodsList(this._page);
 	}
 }

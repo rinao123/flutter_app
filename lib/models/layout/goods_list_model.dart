@@ -1,6 +1,6 @@
-import "package:flutter_app/models/layout/base_model.dart";
+import "package:flutter_app/models/layout/list_model.dart";
 
-class GoodsListModel extends BaseModel {
+class GoodsListModel extends ListModel {
 	int _type;
 	int _goodsStyle;
 	int _pageMargin;

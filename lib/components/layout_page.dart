@@ -4,12 +4,15 @@ import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout.dart";
-import "package:flutter_app/components/page_status.dart";
+import "package:flutter_app/components/layout/list_layout.dart";
+import "package:flutter_app/components/layout/tabs_view.dart";
+import "package:flutter_app/components/loading.dart";
 import "package:flutter_app/controllers/site_controller.dart";
+import "package:flutter_app/models/layout/base_model.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
+import "package:flutter_app/models/layout/list_model.dart";
 
 class LayoutPage extends StatefulWidget {
-
 	final String code;
 
 	LayoutPage(this.code);
@@ -20,24 +23,34 @@ class LayoutPage extends StatefulWidget {
 
 class _LayoutPageState extends State<LayoutPage> {
 	LayoutModel _layoutModel;
+	ScrollController _scrollController;
 	Layout _layout;
-	GlobalKey<LayoutState> _layoutStateKey;
+	List<Map> _items;
+	bool _isLoading;
+	bool _isReachBottom;
 
 	@override
 	void initState() {
 		super.initState();
+		this._scrollController = ScrollController();
+		this._scrollController.addListener(this._onScroll);
+		this._isLoading = true;
+		this._isReachBottom = false;
 		this._getLayouts();
 	}
 
 	@override
 	Widget build(BuildContext context) {
+		List<Widget> silvers = [];
+		Widget header = this._buildHeader();
+		silvers.add(header);
+		List<Widget> items = this._buildBody();
+		silvers.addAll(items);
 		return Scaffold(
 			body: RefreshIndicator(
 				child: CustomScrollView(
-					slivers: <Widget>[
-						this._buildHeader(),
-						this._buildBody()
-					]
+					controller: this._scrollController,
+					slivers: silvers
 				),
 				onRefresh: this._onRefresh
 			)
@@ -60,12 +73,45 @@ class _LayoutPageState extends State<LayoutPage> {
 		);
 	}
 
-	Widget _buildBody() {
-		this._layoutStateKey = GlobalKey<LayoutState>();
-		this._layout = Layout(this._layoutModel.modules, key: this._layoutStateKey);
-		return SliverToBoxAdapter(
-			child: this._layout
+	List<Widget> _buildBody() {
+		List<Widget> body = [];
+		this._items = [];
+		if (this._layoutModel != null) {
+			this._layout = Layout(models: this._layoutModel.modules);
+			this._items = this._layout.getLayouts();
+		}
+		GlobalKey<LoadingState> key = GlobalKey<LoadingState>();
+		Loading loading = Loading(key: key, isShow: this._isLoading, isReachBottom: this._isReachBottom);
+		this._items.add({"key": key, "widget": loading});
+		List<Widget> list = [];
+		for (Map item in this._items) {
+			Widget widget = item["widget"];
+			if (widget.runtimeType == TabsView) {
+				SliverList sliverList = this._getSliverList(list);
+				body.add(sliverList);
+				list = [];
+				body.add(widget);
+			} else {
+				list.add(widget);
+			}
+		}
+		if (list.length > 0) {
+			SliverList sliverList = this._getSliverList(list);
+			body.add(sliverList);
+		}
+		return body;
+	}
+
+	SliverList _getSliverList(List<Widget> list) {
+		SliverList sliverList = SliverList(
+			delegate: SliverChildBuilderDelegate(
+				(BuildContext context, int index) {
+					return list[index];
+				},
+				childCount: list.length
+			)
 		);
+		return sliverList;
 	}
 
 	Future<void> _onRefresh() async {
@@ -73,11 +119,67 @@ class _LayoutPageState extends State<LayoutPage> {
 		this._getLayouts();
 	}
 
+	void _onScroll() {
+		ScrollPosition position = _scrollController.position;
+		if (position.userScrollDirection == ScrollDirection.reverse && position.pixels >= position.maxScrollExtent - 50 && !this._isLoading) {
+			this._showLoading();
+			this._onReachBottom();
+		}
+	}
+
+	void _onReachBottom() {
+		if (this._isReachBottom) {
+			return;
+		}
+		for (Map item in this._items) {
+			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
+				item["key"].currentState.onReachBottom();
+				break;
+			}
+		}
+	}
+
+	void _showLoading() {
+		this._isLoading = true;
+		for (Map item in this._items) {
+			if (item["key"] != null && item["widget"] is Loading) {
+				print(item);
+				print(item["key"]);
+				print(item["key"].currentState);
+				item["key"].currentState.show();
+				break;
+			}
+		}
+	}
+
+	void _hideLoading() {
+		this._isLoading = false;
+		for (Map item in this._items) {
+			if (item["key"] != null && item["widget"] is Loading) {
+				print(item);
+				print(item["key"]);
+				print(item["key"].currentState);
+				item["key"].currentState.hide();
+				break;
+			}
+		}
+	}
+
 	void _getLayouts() async {
 		LayoutModel layoutModel = await SiteController.getLayoutByCode(widget.code);
 		if (layoutModel == null) {
 			return;
 		}
-		this.setState(() => this._layoutModel = layoutModel);
+		bool hasList = false;
+		for (BaseModel module in layoutModel.modules) {
+			module.isShow = !hasList;
+			if (module is ListModel) {
+				hasList = true;
+			}
+		}
+		this.setState(() {
+			this._layoutModel = layoutModel;
+			this._hideLoading();
+		});
 	}
 }

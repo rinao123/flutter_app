@@ -11,11 +11,20 @@ class Member extends StatefulWidget {
 class _MemberState extends State<Member> {
 	@override
 	Widget build(BuildContext context) {
-		return Column(
-			children: <Widget>[
-				SliverToBoxAdapter(child: Image.network("https://image.jielong.iyunlai.cn/product/detail/e5c6031c76f9528658707d9762bb6c2d.jpg")),
-				SliverToBoxAdapter(child: Image.network("https://image.jielong.iyunlai.cn/product/detail/e5c6031c76f9528658707d9762bb6c2d.jpg"))
-			]
+		return Scaffold(
+				appBar: AppBar(
+					backgroundColor: Colors.white,
+					brightness: Brightness.light,
+					title: Text(
+							"会员",
+							style: TextStyle(color: Colors.black)
+					),
+				),
+				body: Column(
+						children: <Widget>[
+							Text("Member")
+						]
+				)
 		);
 	}
 }

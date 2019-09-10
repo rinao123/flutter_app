@@ -6,20 +6,20 @@ import "package:flutter_app/models/layout/icons_model.dart";
 
 class Icons extends StatefulWidget {
 
-	final IconsModel _iconsModel;
+	final IconsModel model;
 
-	Icons(this._iconsModel);
+	Icons({@required this.model});
 
 	@override
 	State<StatefulWidget> createState() {
-		return _IconsState(this._iconsModel);
+		return _IconsState(this.model);
 	}
 }
 
 class _IconsState extends State<Icons> with LayoutBehaviors {
-	IconsModel _iconsModel;
+	IconsModel model;
 
-	_IconsState(this._iconsModel);
+	_IconsState(this.model);
 
 	@override
 	Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class _IconsState extends State<Icons> with LayoutBehaviors {
 
 	List<Widget> _buildItems() {
 		List<Widget> items = [];
-		for (IconModel iconModel in this._iconsModel.items) {
+		for (IconModel iconModel in this.model.items) {
 			Widget item  = this._buildItem(iconModel);
 			items.add(item);
 		}
@@ -55,7 +55,7 @@ class _IconsState extends State<Icons> with LayoutBehaviors {
 
 	Widget _buildItem(IconModel iconModel) {
 		return Container(
-			width: Utils.px2dp(710 / this._iconsModel.numPerLine),
+			width: Utils.px2dp(710 / this.model.numPerLine),
 			height: Utils.px2dp(146),
 			child: InkWell(
 				child: Column(

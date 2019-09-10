@@ -4,20 +4,20 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/models/layout/search_model.dart";
 
 class Search extends StatefulWidget {
-	final SearchModel _searchModel;
+	final SearchModel model;
 
-	Search(this._searchModel);
+	Search({@required this.model});
 
 	@override
 	State<StatefulWidget> createState() {
-		return _SearchState(this._searchModel);
+		return _SearchState(this.model);
 	}
 }
 
 class _SearchState extends State<Search> {
-	SearchModel _searchModel;
+	SearchModel model;
 
-	_SearchState(this._searchModel);
+	_SearchState(this.model);
 
 	@override
 	Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _SearchState extends State<Search> {
 											color: Utils.getColorFromString("#333333")
 										),
 										decoration: InputDecoration(
-											hintText: this._searchModel.title,
+											hintText: this.model.title,
 											hintStyle: TextStyle(
 												color: Utils.getColorFromString("rgba(51, 51, 51, 0.6)")
 											),

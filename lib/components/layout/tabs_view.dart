@@ -4,16 +4,19 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
 import "package:flutter_app/controllers/site_controller.dart";
+import "package:flutter_app/models/layout/base_model.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
+import "package:flutter_app/models/layout/list_model.dart";
 import "package:flutter_app/models/layout/tabs_view_model.dart";
 import "package:flutter_app/models/theme_model.dart";
 import "package:flutter_app/provider/theme_provider.dart";
+import "package:flutter_sticky_header/flutter_sticky_header.dart";
 import "package:provider/provider.dart";
 
 class TabsView extends StatefulWidget {
-	final TabsViewModel _tabsViewModel;
+	final TabsViewModel model;
 
-	TabsView(this._tabsViewModel, {Key key}) : super(key: key);
+	TabsView({Key key, @required this.model}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => TabsViewState();
@@ -25,14 +28,17 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 	LayoutModel _layoutModel;
 	bool _isReachBottom;
 	Layout _layout;
-	GlobalKey<LayoutState> _layoutStateKey;
+	List<Map> _items;
+
+	bool get isReachBottom => this._isReachBottom;
 
 	@override
 	void initState() {
+		print("TabsView initState");
 		super.initState();
 		this._index = 0;
 		this._tabController = TabController(
-			length: widget._tabsViewModel.items.length,
+			length: widget.model.items.length,
 			vsync: this
 		);
 		this._tabController.addListener(() {
@@ -49,17 +55,16 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 
 	@override
 	Widget build(BuildContext context) {
-		return Column(
-			children: <Widget>[
-				this._buildTabs(context),
-				this._buildLayout()
-			]
+		return SliverStickyHeader(
+			header: this._buildTabs(context),
+			sliver:this._buildLayout(),
+			overlapsContent: true
 		);
 	}
 
 	Widget _buildTabs(BuildContext context) {
-		double tabWidth = Utils.DESIGN_WIDTH / widget._tabsViewModel.items.length;
-		if (widget._tabsViewModel.items.length >= 5) {
+		double tabWidth = Utils.DESIGN_WIDTH / widget.model.items.length;
+		if (widget.model.items.length >= 5) {
 			tabWidth = 140;
 		}
 		ThemeModel themeModel = Provider.of<ThemeProvider>(context).getThemeModel();
@@ -82,7 +87,7 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 					borderSide: BorderSide(width: Utils.px2dp(6), color: Utils.getColorFromString(themeModel.mainColor)),
 					insets: EdgeInsets.symmetric(horizontal: Utils.px2dp((tabWidth - 32) / 2))
 				),
-				tabs: widget._tabsViewModel.items.map((item) {
+				tabs: widget.model.items.map((item) {
 					return Tab(
 						child: Container(
 							width: Utils.px2dp(tabWidth),
@@ -97,33 +102,55 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 	}
 
 	Widget _buildLayout() {
-		if (this._layoutModel == null) {
-			return Container();
-		} else {
-			this._layoutStateKey = GlobalKey<LayoutState>();
-			this._layout = Layout(this._layoutModel.modules, isChild: true, key: this._layoutStateKey);
-			return this._layout;
+		this._items = [];
+		if (this._layoutModel != null) {
+			this._layout = Layout(models: this._layoutModel.modules);
+			this._items = this._layout.getLayouts();
 		}
+		List<Widget> list = [];
+		for (Map item in this._items) {
+			Widget widget = item["widget"];
+			if (widget.runtimeType != TabsView) {
+				list.add(widget);
+			}
+		}
+		return SliverList(
+			delegate: SliverChildBuilderDelegate(
+				(BuildContext context, int index) {
+					return list[index];
+				},
+				childCount: list.length
+			)
+		);
 	}
 
 	void getLayouts() async {
-		String code = widget._tabsViewModel.items[this._index].code;
+		String code = widget.model.items[this._index].code;
 		LayoutModel layoutModel = await SiteController.getLayoutByCode(code);
 		if (layoutModel == null) {
 			return;
+		}
+		bool hasList = false;
+		for (BaseModel module in layoutModel.modules) {
+			module.isShow = !hasList;
+			if (module is ListModel) {
+				hasList = true;
+			}
 		}
 		this.setState(() => this._layoutModel = layoutModel);
 	}
 
 	@override
 	void onReachBottom() {
+		print("onReachBottom");
 		if (this._isReachBottom) {
 			return;
 		}
-		if (this._layoutStateKey != null) {
-			print(this._layoutStateKey);
-			print(this._layoutStateKey.currentState);
-			this._layoutStateKey.currentState.onReachBottom();
+		for (Map item in this._items) {
+			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
+				item["key"].currentState.onReachBottom();
+				break;
+			}
 		}
 	}
 }

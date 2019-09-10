@@ -73,7 +73,6 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviors {
 			items.add(this._buildSubTile(index));
 		}
 		items.add(this._buildBottom(context, index));
-		print("/pages/goods_detail/goods_detail?id=${goods.id}");
 		return Container(
 			margin: EdgeInsets.only(top: Utils.px2dp(marginVertical), bottom: Utils.px2dp(marginVertical), right: Utils.px2dp(marginRight)),
 			width: Utils.px2dp(width),
@@ -85,7 +84,8 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviors {
 			child: GestureDetector(
 				child: Column(
 					children: items
-				)
+				),
+				onTap: () => this.onTap(context, link: "/pages/goods_detail/goods_detail?id=${goods.id}")
 			)
 		);
 	}

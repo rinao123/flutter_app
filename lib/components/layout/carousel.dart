@@ -8,15 +8,15 @@ import "package:flutter_app/models/layout/carousel_model.dart";
 import "package:flutter_swiper/flutter_swiper.dart";
 
 class Carousel extends StatefulWidget {
-	final CarouselModel _carouselModel;
+	final CarouselModel model;
 
-	Carousel(this._carouselModel);
+	Carousel({@required this.model});
 
 	@override
 	State<StatefulWidget> createState() => _CarouselState();
 }
 
-class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeepAliveClientMixin<Carousel> {
+class _CarouselState extends State<Carousel> with LayoutBehaviors {
 	List<AdviceModel> _advices;
 	int curIndex = 0;
 
@@ -91,7 +91,7 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 	List<Widget> _buildIndicatorItems() {
 		List<Widget> items = [];
 		for (int i = 0; i < this._advices.length; i++) {
-			Color color = Utils.getColorFromString(i == this.curIndex ? widget._carouselModel.indicatorActiveColor : widget._carouselModel.indicatorColor);
+			Color color = Utils.getColorFromString(i == this.curIndex ? widget.model.indicatorActiveColor : widget.model.indicatorColor);
 			items.add(Container(
 				color: color,
 				width: Utils.px2dp(32),
@@ -107,13 +107,10 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors, AutomaticKeep
 	}
 
 	void getAdList() async {
-		List<AdviceModel> advices = await SiteController.getAdList(widget._carouselModel.code);
+		List<AdviceModel> advices = await SiteController.getAdList(widget.model.code);
 		if (advices == null) {
 			return;
 		}
 		this.setState(() => this._advices = advices);
 	}
-
-  @override
-  bool get wantKeepAlive => true;
 }

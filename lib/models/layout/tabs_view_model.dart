@@ -1,6 +1,6 @@
-import "package:flutter_app/models/layout/base_model.dart";
+import "package:flutter_app/models/layout/list_model.dart";
 
-class TabsViewModel extends BaseModel {
+class TabsViewModel extends ListModel {
 	List<TabViewModel> _items;
 	String _bgColor;
 	String _textColor;
@@ -68,7 +68,7 @@ class TabsViewModel extends BaseModel {
 	}
 }
 
-class TabViewModel extends BaseModel {
+class TabViewModel {
 	String _title;
 	String _code;
 
@@ -82,9 +82,6 @@ class TabViewModel extends BaseModel {
 		TabViewModel tabViewModel = TabViewModel();
 		tabViewModel.title = json["title"];
 		tabViewModel.code = json["code"];
-		tabViewModel.ts = DateTime.now().millisecondsSinceEpoch;
-		tabViewModel.isShow = true;
-		tabViewModel.isReachBottom = true;
 		return tabViewModel;
 	}
 

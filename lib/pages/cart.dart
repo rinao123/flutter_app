@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:flutter/src/rendering/sliver_multi_box_adaptor.dart';
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
 
@@ -42,6 +43,15 @@ class _CartState extends State<Cart> {
 			)
 		);
 	}
+}
+
+class SliverContainer extends SliverMultiBoxAdaptorWidget {
+  @override
+  RenderSliverMultiBoxAdaptor createRenderObject(BuildContext context) {
+    // TODO: implement createRenderObject
+    return null;
+  }
+
 }
 
 class DemoHeader extends SliverPersistentHeaderDelegate {
