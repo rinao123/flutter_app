@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/components/layout/layout_behaviors.dart";
+import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
 import "package:flutter_app/models/goods_model.dart";
 import "package:flutter_app/models/layout/base_goods_list_model.dart";
 import "package:flutter_app/models/theme_model.dart";
@@ -9,7 +9,7 @@ import "package:flutter_app/provider/theme_provider.dart";
 import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
 import "package:provider/provider.dart";
 
-class BaseGoodsList extends StatelessWidget with LayoutBehaviors {
+class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 	final BaseGoodsListModel _baseGoodsListModel;
 
 	BaseGoodsList(this._baseGoodsListModel);

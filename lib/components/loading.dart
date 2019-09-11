@@ -40,7 +40,7 @@ class LoadingState extends State<Loading> {
 			);
 		}
 		return Offstage(
-			offstage: widget.isShow,
+			offstage: !widget.isShow && !widget.isReachBottom,
 			child: Container(
 				width: Utils.px2dp(Utils.DESIGN_WIDTH),
 				height: Utils.px2dp(112),

@@ -2,8 +2,9 @@ import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout/base_goods_list.dart";
-import "package:flutter_app/components/layout/layout_behaviors.dart";
+import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
+import 'package:flutter_app/components/notifications/list_layout_notification.dart';
 import "package:flutter_app/controllers/goods_controller.dart";
 import "package:flutter_app/models/goods_model.dart";
 import "package:flutter_app/models/layout/base_goods_list_model.dart";
@@ -18,7 +19,7 @@ class GoodsList extends StatefulWidget {
 	State<StatefulWidget> createState() => GoodsListState();
 }
 
-class GoodsListState extends State<GoodsList> with LayoutBehaviors implements ListLayout {
+class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implements ListLayout {
 	int _page;
 	List _goodsList;
 	bool _isShowLoading;
@@ -69,7 +70,10 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviors implements Li
 		baseGoodsListModel.goodsList = this._goodsList;
 		baseGoodsListModel.isShowLoading = this._isShowLoading;
 		baseGoodsListModel.isReachBottom = this._isGoodsListReachBottom;
-		return BaseGoodsList(baseGoodsListModel);
+		return Offstage(
+			offstage: !widget.model.isShow,
+			child: BaseGoodsList(baseGoodsListModel)
+		);
 	}
 
 	void _getGoodsList(int page) async {
@@ -90,6 +94,7 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviors implements Li
 			this._isShowLoading = !widget.model.isLoadingControlByPage || widget.model.type == 6;
 			this._isGoodsListReachBottom = goodsList.length < widget.model.pageSize;
 		});
+		ListLayoutNotification(message: ListLayoutNotification.MESSAGE_LOADED).dispatch(this.context);
 	}
 
 	@override

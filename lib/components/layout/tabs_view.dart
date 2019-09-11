@@ -2,7 +2,9 @@ import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout.dart";
+import "package:flutter_app/components/layout/layout_container_mixin.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
+import "package:flutter_app/components/notifications/list_layout_notification.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/layout/base_model.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
@@ -22,13 +24,11 @@ class TabsView extends StatefulWidget {
 	State<StatefulWidget> createState() => TabsViewState();
 }
 
-class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin implements ListLayout {
+class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin, LayoutContainerMixin implements ListLayout {
 	int _index;
 	TabController _tabController;
 	LayoutModel _layoutModel;
 	bool _isReachBottom;
-	Layout _layout;
-	List<Map> _items;
 
 	bool get isReachBottom => this._isReachBottom;
 
@@ -36,6 +36,7 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 	void initState() {
 		print("TabsView initState");
 		super.initState();
+		this.isChild = true;
 		this._index = 0;
 		this._tabController = TabController(
 			length: widget.model.items.length,
@@ -45,20 +46,20 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 			if (this._tabController.indexIsChanging) {
 				this.setState(() {
 					this._index = this._tabController.index;
-					this.getLayouts();
+					this._getLayouts();
 				});
 			}
 		});
+		this.items = [];
 		this._isReachBottom = false;
-		this.getLayouts();
+		this._getLayouts();
 	}
 
 	@override
 	Widget build(BuildContext context) {
 		return SliverStickyHeader(
 			header: this._buildTabs(context),
-			sliver:this._buildLayout(),
-			overlapsContent: true
+			sliver:this._buildLayout()
 		);
 	}
 
@@ -102,13 +103,8 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 	}
 
 	Widget _buildLayout() {
-		this._items = [];
-		if (this._layoutModel != null) {
-			this._layout = Layout(models: this._layoutModel.modules);
-			this._items = this._layout.getLayouts();
-		}
 		List<Widget> list = [];
-		for (Map item in this._items) {
+		for (Map item in this.items) {
 			Widget widget = item["widget"];
 			if (widget.runtimeType != TabsView) {
 				list.add(widget);
@@ -124,21 +120,27 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 		);
 	}
 
-	void getLayouts() async {
+	void _getLayouts() async {
+		this.setState(() => this._layoutModel = null);
 		String code = widget.model.items[this._index].code;
-		LayoutModel layoutModel = await SiteController.getLayoutByCode(code);
-		if (layoutModel == null) {
-			return;
+		LayoutModel layoutModel = await this.getLayouts(code);
+		List<Map> items = [];
+		if (layoutModel != null) {
+			items = this.getLayoutWidgets(layoutModel.modules);
 		}
-		bool hasList = false;
-		for (BaseModel module in layoutModel.modules) {
-			module.isShow = !hasList;
-			if (module is ListModel) {
-				hasList = true;
-			}
-		}
-		this.setState(() => this._layoutModel = layoutModel);
+		this.setState(() {
+			this._layoutModel = layoutModel;
+			this.items = items;
+		});
 	}
+
+//	bool onListLayoutNotification(ListLayoutNotification notification) {
+//		print(notification);
+//		if (notification.message == ListLayoutNotification.MESSAGE_LOADED) {
+//			ListLayoutNotification(message: ListLayoutNotification.MESSAGE_LOADED).dispatch(this.context);
+//		}
+//		return true;
+//	}
 
 	@override
 	void onReachBottom() {
@@ -146,7 +148,7 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin 
 		if (this._isReachBottom) {
 			return;
 		}
-		for (Map item in this._items) {
+		for (Map item in this.items) {
 			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
 				item["key"].currentState.onReachBottom();
 				break;

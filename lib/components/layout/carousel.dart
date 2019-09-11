@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/components/layout/layout_behaviors.dart";
+import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/advice_model.dart";
 import "package:flutter_app/models/layout/carousel_model.dart";
@@ -13,14 +13,12 @@ class Carousel extends StatefulWidget {
 	Carousel({@required this.model});
 
 	@override
-	State<StatefulWidget> createState() => _CarouselState();
+	State<StatefulWidget> createState() => CarouselState();
 }
 
-class _CarouselState extends State<Carousel> with LayoutBehaviors {
+class CarouselState extends State<Carousel> with LayoutBehaviorsMixin {
 	List<AdviceModel> _advices;
 	int curIndex = 0;
-
-	_CarouselState();
 
 	@override
 	void initState() {
@@ -41,33 +39,36 @@ class _CarouselState extends State<Carousel> with LayoutBehaviors {
 			);
 		}
 		print(this._advices);
-		return Container(
-			width: Utils.px2dp(this._advices[0].width),
-			height: Utils.px2dp(this._advices[0].height),
-			child: Stack(
-				children: <Widget>[
-					Swiper(
-						autoplayDelay: 5000,
-						autoplay: this._advices.length > 1,
-						loop: this._advices.length > 1,
-						duration: 500,
-						itemCount: this._advices.length,
-						itemBuilder: (BuildContext context, int index) {
-							AdviceModel adviceModel = this._advices[index];
-							return FadeInImage.assetNetwork(
+		return Offstage(
+			offstage: !widget.model.isShow,
+			child: Container(
+				width: Utils.px2dp(this._advices[0].width),
+				height: Utils.px2dp(this._advices[0].height),
+				child: Stack(
+					children: <Widget>[
+						Swiper(
+							autoplayDelay: 5000,
+							autoplay: this._advices.length > 1,
+							loop: this._advices.length > 1,
+							duration: 500,
+							itemCount: this._advices.length,
+							itemBuilder: (BuildContext context, int index) {
+								AdviceModel adviceModel = this._advices[index];
+								return FadeInImage.assetNetwork(
 									image: adviceModel.picUrl,
 									placeholder: "assets/images/loading.gif",
 									width: Utils.px2dp(adviceModel.width),
 									height: Utils.px2dp(adviceModel.height)
-							);
-						},
-						onTap: (int index) => this.onTap(context, link: this._advices[index].link),
-						onIndexChanged: (int index) {
-							this.setState(() => this.curIndex = index);
-						}
-					),
-					this._buildIndicator()
-				]
+								);
+							},
+							onTap: (int index) => this.onTap(context, link: this._advices[index].link),
+							onIndexChanged: (int index) {
+								this.setState(() => this.curIndex = index);
+							}
+						),
+						this._buildIndicator()
+					]
+				)
 			)
 		);
 	}

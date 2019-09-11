@@ -1,52 +1,49 @@
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/components/layout/layout_behaviors.dart";
+import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
 import "package:flutter_app/models/layout/icons_model.dart";
 
 class Icons extends StatefulWidget {
-
 	final IconsModel model;
 
 	Icons({@required this.model});
 
 	@override
-	State<StatefulWidget> createState() {
-		return _IconsState(this.model);
-	}
+	State<StatefulWidget> createState() => IconsState();
 }
 
-class _IconsState extends State<Icons> with LayoutBehaviors {
-	IconsModel model;
-
-	_IconsState(this.model);
+class IconsState extends State<Icons> with LayoutBehaviorsMixin {
 
 	@override
 	Widget build(BuildContext context) {
-		return Container(
-			color: Utils.getColorFromString("#FFFFFF"),
-			child: Row(
-				children: <Widget>[
-					Padding(padding: EdgeInsets.only(right: Utils.px2dp(20))),
-					Column(
-						children: <Widget>[
-							Padding(padding: EdgeInsets.only(top: Utils.px2dp(20))),
-							Container(
-								width: Utils.px2dp(730),
-								child: Wrap(
-									children: this._buildItems()
+		return Offstage(
+			offstage: !widget.model.isShow,
+			child: Container(
+				color: Utils.getColorFromString("#FFFFFF"),
+				child: Row(
+					children: <Widget>[
+						Padding(padding: EdgeInsets.only(right: Utils.px2dp(20))),
+						Column(
+							children: <Widget>[
+								Padding(padding: EdgeInsets.only(top: Utils.px2dp(20))),
+								Container(
+									width: Utils.px2dp(730),
+									child: Wrap(
+										children: this._buildItems()
+									)
 								)
-							)
-						]
-					)
-				]
+							]
+						)
+					]
+				)
 			)
 		);
 	}
 
 	List<Widget> _buildItems() {
 		List<Widget> items = [];
-		for (IconModel iconModel in this.model.items) {
+		for (IconModel iconModel in widget.model.items) {
 			Widget item  = this._buildItem(iconModel);
 			items.add(item);
 		}
@@ -55,7 +52,7 @@ class _IconsState extends State<Icons> with LayoutBehaviors {
 
 	Widget _buildItem(IconModel iconModel) {
 		return Container(
-			width: Utils.px2dp(710 / this.model.numPerLine),
+			width: Utils.px2dp(710 / widget.model.numPerLine),
 			height: Utils.px2dp(146),
 			child: InkWell(
 				child: Column(

@@ -4,9 +4,11 @@ import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout.dart";
+import "package:flutter_app/components/layout/layout_container_mixin.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
 import "package:flutter_app/components/layout/tabs_view.dart";
 import "package:flutter_app/components/loading.dart";
+import "package:flutter_app/components/notifications/list_layout_notification.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/layout/base_model.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
@@ -21,20 +23,19 @@ class LayoutPage extends StatefulWidget {
 	State<StatefulWidget> createState() => _LayoutPageState();
 }
 
-class _LayoutPageState extends State<LayoutPage> {
+class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 	LayoutModel _layoutModel;
 	ScrollController _scrollController;
-	Layout _layout;
-	List<Map> _items;
-	bool _isLoading;
 	bool _isReachBottom;
+
 
 	@override
 	void initState() {
 		super.initState();
 		this._scrollController = ScrollController();
 		this._scrollController.addListener(this._onScroll);
-		this._isLoading = true;
+		this.items = [];
+		this.isLoading = true;
 		this._isReachBottom = false;
 		this._getLayouts();
 	}
@@ -75,16 +76,8 @@ class _LayoutPageState extends State<LayoutPage> {
 
 	List<Widget> _buildBody() {
 		List<Widget> body = [];
-		this._items = [];
-		if (this._layoutModel != null) {
-			this._layout = Layout(models: this._layoutModel.modules);
-			this._items = this._layout.getLayouts();
-		}
-		GlobalKey<LoadingState> key = GlobalKey<LoadingState>();
-		Loading loading = Loading(key: key, isShow: this._isLoading, isReachBottom: this._isReachBottom);
-		this._items.add({"key": key, "widget": loading});
 		List<Widget> list = [];
-		for (Map item in this._items) {
+		for (Map item in this.items) {
 			Widget widget = item["widget"];
 			if (widget.runtimeType == TabsView) {
 				SliverList sliverList = this._getSliverList(list);
@@ -115,23 +108,29 @@ class _LayoutPageState extends State<LayoutPage> {
 	}
 
 	Future<void> _onRefresh() async {
-		this.setState(() => this._layoutModel = null);
 		this._getLayouts();
 	}
 
 	void _onScroll() {
 		ScrollPosition position = _scrollController.position;
-		if (position.userScrollDirection == ScrollDirection.reverse && position.pixels >= position.maxScrollExtent - 50 && !this._isLoading) {
-			this._showLoading();
-			this._onReachBottom();
+		if (position.userScrollDirection == ScrollDirection.reverse && position.pixels >= position.maxScrollExtent - 50 && !this.isLoading) {
+			this.showLoading();
+			this.onReachBottom();
 		}
 	}
 
-	void _onReachBottom() {
+//	bool onListLayoutNotification(ListLayoutNotification notification) {
+//		if (notification.message == ListLayoutNotification.MESSAGE_LOADED) {
+//			this.hideLoading();
+//		}
+//		return true;
+//	}
+
+	void onReachBottom() {
 		if (this._isReachBottom) {
 			return;
 		}
-		for (Map item in this._items) {
+		for (Map item in this.items) {
 			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
 				item["key"].currentState.onReachBottom();
 				break;
@@ -139,47 +138,20 @@ class _LayoutPageState extends State<LayoutPage> {
 		}
 	}
 
-	void _showLoading() {
-		this._isLoading = true;
-		for (Map item in this._items) {
-			if (item["key"] != null && item["widget"] is Loading) {
-				print(item);
-				print(item["key"]);
-				print(item["key"].currentState);
-				item["key"].currentState.show();
-				break;
-			}
-		}
-	}
-
-	void _hideLoading() {
-		this._isLoading = false;
-		for (Map item in this._items) {
-			if (item["key"] != null && item["widget"] is Loading) {
-				print(item);
-				print(item["key"]);
-				print(item["key"].currentState);
-				item["key"].currentState.hide();
-				break;
-			}
-		}
-	}
-
 	void _getLayouts() async {
-		LayoutModel layoutModel = await SiteController.getLayoutByCode(widget.code);
-		if (layoutModel == null) {
-			return;
+		this.setState(() => this._layoutModel = null);
+		LayoutModel layoutModel = await this.getLayouts(widget.code);
+		List<Map> items = [];
+		if (layoutModel != null) {
+			items = this.getLayoutWidgets(layoutModel.modules);
 		}
-		bool hasList = false;
-		for (BaseModel module in layoutModel.modules) {
-			module.isShow = !hasList;
-			if (module is ListModel) {
-				hasList = true;
-			}
-		}
+		GlobalKey<LoadingState> key = GlobalKey<LoadingState>();
+		Loading loading = Loading(key: key, isShow: this.isLoading, isReachBottom: this._isReachBottom);
+		items.add({"key": key, "widget": loading});
 		this.setState(() {
 			this._layoutModel = layoutModel;
-			this._hideLoading();
+			this.items = items;
+			this.hideLoading();
 		});
 	}
 }
