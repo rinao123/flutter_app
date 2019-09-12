@@ -17,8 +17,9 @@ import "package:provider/provider.dart";
 
 class TabsView extends StatefulWidget {
 	final TabsViewModel model;
+	final Function eventListener;
 
-	TabsView({Key key, @required this.model}) : super(key: key);
+	TabsView({Key key, @required this.model, this.eventListener}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => TabsViewState();
@@ -73,8 +74,8 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 			width: Utils.px2dp(Utils.DESIGN_WIDTH),
 			height: Utils.px2dp(60),
 			decoration: BoxDecoration(
-					color: Utils.getColorFromString("#ffffff"),
-					border: Border(bottom: BorderSide(color: Utils.getColorFromString("#f1f1f1")))
+				color: Utils.getColorFromString("#ffffff"),
+				border: Border(bottom: BorderSide(color: Utils.getColorFromString("#f1f1f1")))
 			),
 			child: TabBar(
 				isScrollable: true,
@@ -134,13 +135,11 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 		});
 	}
 
-//	bool onListLayoutNotification(ListLayoutNotification notification) {
-//		print(notification);
-//		if (notification.message == ListLayoutNotification.MESSAGE_LOADED) {
-//			ListLayoutNotification(message: ListLayoutNotification.MESSAGE_LOADED).dispatch(this.context);
-//		}
-//		return true;
-//	}
+	void onListEvent(int message, Key key) {
+		if (widget.eventListener != null) {
+			widget.eventListener(ListLayoutNotification.MESSAGE_LOADED, widget.key);
+		}
+	}
 
 	@override
 	void onReachBottom() {

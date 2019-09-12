@@ -12,33 +12,30 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
+
+	@override
+	void initState() {
+		print("cart");
+		super.initState();
+	}
+
 	@override
 	Widget build(BuildContext context) {
-		return NotificationListener<ListLayoutNotification>(
-			onNotification: (ListLayoutNotification notification) {
-				print("onListLayoutNotification");
-				print(notification);
-				return true;
-			},
-			child: Scaffold(
-				appBar: AppBar(
-					backgroundColor: Colors.white,
-					brightness: Brightness.light,
-					title: Text(
-						"购物袋",
-						style: TextStyle(color: Colors.black)
-					),
+		return Scaffold(
+			appBar: AppBar(
+				elevation: 0,
+				backgroundColor: Colors.white,
+				brightness: Brightness.light,
+				title: Text(
+					"购物袋",
+					style: TextStyle(color: Colors.black)
 				),
-				body:  GestureDetector(
-					child: Container(
-						color: Colors.pink,
-						width: Utils.px2dp(750),
-						height: Utils.px2dp(100),
-					),
-					onTap: () => ListLayoutNotification(message: ListLayoutNotification.MESSAGE_LOADED).dispatch(context)
-				)
+			),
+			body: Column(
+				children: <Widget>[
+					Text("MyInfo")
+				]
 			)
 		);
 	}
 }
-

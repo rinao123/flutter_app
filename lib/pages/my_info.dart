@@ -13,6 +13,7 @@ class _MyInfoState extends State<MyInfo> {
 	Widget build(BuildContext context) {
 		return Scaffold(
 			appBar: AppBar(
+				elevation: 0,
 				backgroundColor: Colors.white,
 				brightness: Brightness.light,
 				title: Text(

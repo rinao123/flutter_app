@@ -4,7 +4,7 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout/base_goods_list.dart";
 import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
-import 'package:flutter_app/components/notifications/list_layout_notification.dart';
+import "package:flutter_app/components/notifications/list_layout_notification.dart";
 import "package:flutter_app/controllers/goods_controller.dart";
 import "package:flutter_app/models/goods_model.dart";
 import "package:flutter_app/models/layout/base_goods_list_model.dart";
@@ -12,8 +12,9 @@ import "package:flutter_app/models/layout/goods_list_model.dart";
 
 class GoodsList extends StatefulWidget {
 	final GoodsListModel model;
+	final Function eventListener;
 
-	GoodsList({Key key, @required this.model}) : super(key: key);
+	GoodsList({Key key, @required this.model, this.eventListener}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => GoodsListState();
@@ -94,7 +95,9 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 			this._isShowLoading = !widget.model.isLoadingControlByPage || widget.model.type == 6;
 			this._isGoodsListReachBottom = goodsList.length < widget.model.pageSize;
 		});
-		ListLayoutNotification(message: ListLayoutNotification.MESSAGE_LOADED).dispatch(this.context);
+		if (widget.eventListener != null) {
+			widget.eventListener(ListLayoutNotification.MESSAGE_LOADED, widget.key);
+		}
 	}
 
 	@override

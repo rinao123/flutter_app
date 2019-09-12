@@ -48,12 +48,6 @@ class LayoutContainerMixin {
 			}
 			Map item = this.getLayoutWidget(model);
 			if (item != null) {
-				if (item["widget"] is ListLayout) {
-					item["widget"] = NotificationListener(
-						onNotification: this.onListLayoutNotification,
-						child: item["widget"]
-					);
-				}
 				items.add(item);
 			}
 		}
@@ -72,22 +66,20 @@ class LayoutContainerMixin {
 				GlobalKey<GoodsListState> key = GlobalKey<GoodsListState>();
 				GoodsListModel goodsListModel = model as GoodsListModel;
 				goodsListModel.isLoadingControlByPage = true;
-				return {"key": key, "widget": GoodsList(key: key, model: model)};
+				return {"key": key, "widget": GoodsList(key: key, model: model, eventListener: this.onListEvent)};
 			case SearchModel:
 				return {"key": null, "widget": Search(model: model)};
 			case TabsViewModel:
 				GlobalKey<TabsViewState> key = GlobalKey<TabsViewState>();
-				return {"key": key, "widget": TabsView(key: key, model: model)};
+				return {"key": key, "widget": TabsView(key: key, model: model, eventListener: this.onListEvent)};
 			default:
 				print("_buildBodyItem unknown module");
 				return null;
 		}
 	}
 
-	bool onListLayoutNotification(ListLayoutNotification notification) {
-		print("onListLayoutNotification");
-		print(notification);
-		return true;
+	void onListEvent(int message, Key key) {
+
 	}
 
 	void showLoading() {

@@ -63,6 +63,7 @@ class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 		String titleColor = this._layoutModel == null ? "#000000" : this._layoutModel.frontColor;
 		String title = this._layoutModel == null ? "" : this._layoutModel.title;
 		return SliverAppBar(
+			elevation: 0,
 			backgroundColor: Utils.getColorFromString(backgroundColor),
 			brightness: Brightness.light,
 			iconTheme: IconThemeData(color: Colors.black),
@@ -119,12 +120,10 @@ class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 		}
 	}
 
-//	bool onListLayoutNotification(ListLayoutNotification notification) {
-//		if (notification.message == ListLayoutNotification.MESSAGE_LOADED) {
-//			this.hideLoading();
-//		}
-//		return true;
-//	}
+	void onListEvent(int message, Key key) {
+		print("onListEvent");
+		this.hideLoading();
+	}
 
 	void onReachBottom() {
 		if (this._isReachBottom) {

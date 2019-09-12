@@ -9,7 +9,7 @@ class HttpHelper {
     static Dio _getInstance() {
         if (_instance == null) {
             _instance = Dio();
-            _instance.interceptors.add(LogInterceptor(request:true, requestHeader: true, requestBody: true, responseHeader: true, responseBody: true, error: true));
+//            _instance.interceptors.add(LogInterceptor(request:true, requestHeader: true, requestBody: true, responseHeader: true, responseBody: true, error: true));
         }
         return _instance;
     }
