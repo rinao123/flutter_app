@@ -1,8 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:flutter/src/rendering/sliver_multi_box_adaptor.dart';
 import "package:flutter/widgets.dart";
-import "package:flutter_app/common/utils.dart";
-import 'package:flutter_app/components/notifications/list_layout_notification.dart';
 
 class Cart extends StatefulWidget {
 	@override

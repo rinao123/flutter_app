@@ -6,13 +6,14 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout.dart";
 import "package:flutter_app/components/layout/layout_container_mixin.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
+import "package:flutter_app/components/layout/list_layout_event.dart";
 import "package:flutter_app/components/layout/tabs_view.dart";
 import "package:flutter_app/components/loading.dart";
-import "package:flutter_app/components/notifications/list_layout_notification.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/layout/base_model.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
 import "package:flutter_app/models/layout/list_model.dart";
+import "package:pull_to_refresh/pull_to_refresh.dart";
 
 class LayoutPage extends StatefulWidget {
 	final String code;
@@ -26,6 +27,7 @@ class LayoutPage extends StatefulWidget {
 class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 	LayoutModel _layoutModel;
 	ScrollController _scrollController;
+	RefreshController _refreshController;
 	bool _isReachBottom;
 
 
@@ -34,11 +36,18 @@ class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 		super.initState();
 		this._scrollController = ScrollController();
 		this._scrollController.addListener(this._onScroll);
+		this._refreshController = RefreshController(initialRefresh: false);
 		this.items = [];
 		this.isLoading = true;
 		this._isReachBottom = false;
 		this._getLayouts();
 	}
+
+	@override
+  void dispose() {
+	this._scrollController.dispose();
+    super.dispose();
+  }
 
 	@override
 	Widget build(BuildContext context) {
@@ -48,7 +57,9 @@ class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 		List<Widget> items = this._buildBody();
 		silvers.addAll(items);
 		return Scaffold(
-			body: RefreshIndicator(
+			body: SmartRefresher(
+				enablePullDown: true,
+				controller: this._refreshController,
 				child: CustomScrollView(
 					controller: this._scrollController,
 					slivers: silvers
@@ -65,13 +76,21 @@ class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 		return SliverAppBar(
 			elevation: 0,
 			backgroundColor: Utils.getColorFromString(backgroundColor),
-			brightness: Brightness.light,
-			iconTheme: IconThemeData(color: Colors.black),
+			brightness: titleColor == "#000000" ? Brightness.light : Brightness.dark,
+			iconTheme: IconThemeData(color: titleColor == "#000000" ? Colors.black : Colors.white),
 			title: Text(
 				title,
 				style: TextStyle(color: Utils.getColorFromString(titleColor))
 			),
-			pinned: true
+			pinned: true,
+			expandedHeight: Utils.px2dp(370) - MediaQuery.of(context).padding.top,
+			flexibleSpace: FlexibleSpaceBar(
+				background: Container(
+					width: Utils.px2dp(750),
+					height: Utils.px2dp(370),
+					child: Image.network("https://image.jielong.iyunlai.cn/product/detail/bb284c644e2dea07f2046e6364ac87d9.jpg", fit: BoxFit.fitWidth)
+				)
+			)
 		);
 	}
 
@@ -109,6 +128,8 @@ class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 	}
 
 	Future<void> _onRefresh() async {
+		this.isLoading = true;
+		this._isReachBottom = false;
 		this._getLayouts();
 	}
 
@@ -120,9 +141,12 @@ class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 		}
 	}
 
-	void onListEvent(int message, Key key) {
-		print("onListEvent");
-		this.hideLoading();
+	void onListEvent(int event, Key key) {
+		if (event == ListLayoutEvent.LOADED) {
+			this.hideLoading();
+		} else if (event == ListLayoutEvent.REACH_BOTTOM) {
+			this.onReachBottom();
+		}
 	}
 
 	void onReachBottom() {
@@ -132,6 +156,17 @@ class _LayoutPageState extends State<LayoutPage> with LayoutContainerMixin {
 		for (Map item in this.items) {
 			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
 				item["key"].currentState.onReachBottom();
+				return;
+			}
+		}
+		this.showReachBottom();
+	}
+
+	void showReachBottom() {
+		this._isReachBottom = true;
+		for (Map item in this.items) {
+			if (item["key"] != null && item["widget"] is Loading) {
+				item["key"].currentState.reachBottom();
 				break;
 			}
 		}

@@ -7,7 +7,6 @@ import "package:flutter_app/components/layout/list_layout.dart";
 import "package:flutter_app/components/layout/search.dart";
 import "package:flutter_app/components/layout/tabs_view.dart";
 import "package:flutter_app/components/loading.dart";
-import "package:flutter_app/components/notifications/list_layout_notification.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/layout/base_model.dart";
 import "package:flutter_app/models/layout/carousel_model.dart";
@@ -78,7 +77,7 @@ class LayoutContainerMixin {
 		}
 	}
 
-	void onListEvent(int message, Key key) {
+	void onListEvent(int event, Key key) {
 
 	}
 
@@ -86,9 +85,6 @@ class LayoutContainerMixin {
 		this.isLoading = true;
 		for (Map item in this.items) {
 			if (item["key"] != null && item["widget"] is Loading) {
-				print(item);
-				print(item["key"]);
-				print(item["key"].currentState);
 				item["key"].currentState.show();
 				break;
 			}
@@ -99,12 +95,11 @@ class LayoutContainerMixin {
 		this.isLoading = false;
 		for (Map item in this.items) {
 			if (item["key"] != null && item["widget"] is Loading && item["key"].currentState != null) {
-				print(item);
-				print(item["key"]);
-				print(item["key"].currentState);
 				item["key"].currentState.hide();
 				break;
 			}
 		}
 	}
+
+
 }

@@ -4,7 +4,7 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout.dart";
 import "package:flutter_app/components/layout/layout_container_mixin.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
-import "package:flutter_app/components/notifications/list_layout_notification.dart";
+import "package:flutter_app/components/layout/list_layout_event.dart";
 import "package:flutter_app/controllers/site_controller.dart";
 import "package:flutter_app/models/layout/base_model.dart";
 import "package:flutter_app/models/layout/layout_model.dart";
@@ -28,7 +28,7 @@ class TabsView extends StatefulWidget {
 class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin, LayoutContainerMixin implements ListLayout {
 	int _index;
 	TabController _tabController;
-	LayoutModel _layoutModel;
+	List<Widget> _contents;
 	bool _isReachBottom;
 
 	bool get isReachBottom => this._isReachBottom;
@@ -52,6 +52,7 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 			}
 		});
 		this.items = [];
+		this._contents = [];
 		this._isReachBottom = false;
 		this._getLayouts();
 	}
@@ -122,7 +123,6 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 	}
 
 	void _getLayouts() async {
-		this.setState(() => this._layoutModel = null);
 		String code = widget.model.items[this._index].code;
 		LayoutModel layoutModel = await this.getLayouts(code);
 		List<Map> items = [];
@@ -130,28 +130,34 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 			items = this.getLayoutWidgets(layoutModel.modules);
 		}
 		this.setState(() {
-			this._layoutModel = layoutModel;
 			this.items = items;
 		});
 	}
 
-	void onListEvent(int message, Key key) {
+	void onListEvent(int event, Key key) {
 		if (widget.eventListener != null) {
-			widget.eventListener(ListLayoutNotification.MESSAGE_LOADED, widget.key);
+			if (event == ListLayoutEvent.LOADED) {
+				widget.eventListener(ListLayoutEvent.LOADED, widget.key);
+			} else if (event == ListLayoutEvent.REACH_BOTTOM) {
+				this.onReachBottom();
+			}
 		}
 	}
 
 	@override
 	void onReachBottom() {
-		print("onReachBottom");
 		if (this._isReachBottom) {
 			return;
 		}
 		for (Map item in this.items) {
 			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
 				item["key"].currentState.onReachBottom();
-				break;
+				return;
 			}
+		}
+		this._isReachBottom = true;
+		if (widget.eventListener != null) {
+			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
 		}
 	}
 }

@@ -4,7 +4,7 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/components/layout/base_goods_list.dart";
 import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
 import "package:flutter_app/components/layout/list_layout.dart";
-import "package:flutter_app/components/notifications/list_layout_notification.dart";
+import "package:flutter_app/components/layout/list_layout_event.dart";
 import "package:flutter_app/controllers/goods_controller.dart";
 import "package:flutter_app/models/goods_model.dart";
 import "package:flutter_app/models/layout/base_goods_list_model.dart";
@@ -86,18 +86,22 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 		if (goodsList.length == widget.model.pageSize) {
 			this._page++;
 		}
+		this._isShowLoading = !widget.model.isLoadingControlByPage || widget.model.type == 6;
+		this._isGoodsListReachBottom = goodsList.length < widget.model.pageSize;
+		this._isReachBottom = this._isGoodsListReachBottom;
+		if (widget.eventListener != null) {
+			widget.eventListener(ListLayoutEvent.LOADED, widget.key);
+			if (this._isGoodsListReachBottom) {
+				widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
+			}
+		}
 		this.setState(() {
 			if (page == 1) {
 				this._goodsList = goodsList;
 			} else {
 				this._goodsList.addAll(goodsList);
 			}
-			this._isShowLoading = !widget.model.isLoadingControlByPage || widget.model.type == 6;
-			this._isGoodsListReachBottom = goodsList.length < widget.model.pageSize;
 		});
-		if (widget.eventListener != null) {
-			widget.eventListener(ListLayoutNotification.MESSAGE_LOADED, widget.key);
-		}
 	}
 
 	@override

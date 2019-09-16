@@ -4,7 +4,7 @@ import "package:flutter_app/common/utils.dart";
 
 class Loading extends StatefulWidget {
 	bool isShow;
-	final bool isReachBottom;
+	bool isReachBottom;
 	final String text;
 
 	Loading({Key key, this.isShow: true, @required this.isReachBottom, this.text: "—— 云来商城提供技术支持 ——"}) : super(key: key);
@@ -29,7 +29,7 @@ class LoadingState extends State<Loading> {
 				widget.text,
 				style: TextStyle(
 					fontSize: Utils.px2dp(24),
-					color: Utils.getColorFromString("rgba(rgba(85,85,85,0.3))")
+					color: Utils.getColorFromString("rgba(85,85,85,0.3)")
 				)
 			);
 		} else {
@@ -57,5 +57,13 @@ class LoadingState extends State<Loading> {
 
 	void hide() {
 		this.setState(() => widget.isShow = false);
+	}
+
+	void reset() {
+		this.setState(() => widget.isReachBottom = false);
+	}
+
+	void reachBottom() {
+		this.setState(() => widget.isReachBottom = true);
 	}
 }

@@ -28,7 +28,8 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 				itemBuilder: (BuildContext context, int index) {
 					return items[index];
 				},
-				staggeredTileBuilder: (int index) => StaggeredTile.fit(1)
+				staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+				padding: EdgeInsets.all(0)
 			)
 		);
 	}
