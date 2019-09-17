@@ -1,12 +1,16 @@
-import "package:dio/dio.dart";
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
-import "package:flutter_app/apis/auth_api.dart";
-import 'package:flutter_app/common/http_helper.dart';
-import 'package:flutter_app/models/user_info_model.dart';
-import 'package:flutter_app/provider/user_info.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 
+import '../apis/auth_api.dart';
+import '../common/http_helper.dart';
+import '../models/user_info_model.dart';
+import '../provider/user_info.dart';
+
 class AuthController {
+	static final Logger logger = Logger("AuthController");
+
 	static Future<bool> login(String code, {BuildContext context}) async {
 		Response response = await AuthApi.login(code);
 		bool isSuccess = false;
@@ -14,7 +18,7 @@ class AuthController {
 			return isSuccess;
 		}
 		if (response.data["ret"] != 0) {
-			print("login fail:${response.data["msg"]}");
+			logger.warning("login fail:${response.data["msg"]}");
 			return isSuccess;
 		}
 		HttpHelper.setSkey(response.data["data"]["skey"]);

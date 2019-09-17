@@ -1,4 +1,4 @@
-import "package:flutter_app/models/layout/base_model.dart";
+import 'base_model.dart';
 
 class Img1Model extends BaseModel {
 	String _img;

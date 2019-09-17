@@ -1,18 +1,15 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Cart extends StatefulWidget {
 	@override
-	State<StatefulWidget> createState() {
-		return _CartState();
-	}
+	State<StatefulWidget> createState() => _CartState();
 }
 
 class _CartState extends State<Cart> {
 
 	@override
 	void initState() {
-		print("cart");
 		super.initState();
 	}
 
@@ -30,7 +27,7 @@ class _CartState extends State<Cart> {
 			),
 			body: Column(
 				children: <Widget>[
-					Text("MyInfo")
+					Text("Cart")
 				]
 			)
 		);

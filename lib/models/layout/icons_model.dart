@@ -1,4 +1,4 @@
-import "package:flutter_app/models/layout/base_model.dart";
+import 'base_model.dart';
 
 class IconsModel extends BaseModel {
 	int _numPerLine;

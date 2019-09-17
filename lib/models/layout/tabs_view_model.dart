@@ -1,4 +1,4 @@
-import "package:flutter_app/models/layout/list_model.dart";
+import 'list_model.dart';
 
 class TabsViewModel extends ListModel {
 	List<TabViewModel> _items;

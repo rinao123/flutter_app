@@ -1,17 +1,17 @@
-import "dart:ui";
 
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/common/navigation_helper.dart";
-import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/controllers/auth_controller.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
 import "package:fluwx/fluwx.dart" as fluwx;
 
+import '../common/navigation_helper.dart';
+import '../common/utils.dart';
+import '../controllers/auth_controller.dart';
+
 class Login extends StatefulWidget {
+
     @override
-    State<StatefulWidget> createState() {
-        return _LoginState();
-    }
+    State<StatefulWidget> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
@@ -62,6 +62,6 @@ class _LoginState extends State<Login> {
     }
 
     void _goToHome() {
-        NavigationHelper.redirect(context, "/pages/home/home");
+        NavigationHelper.redirect(this.context, "/pages/home/home");
     }
 }

@@ -1,5 +1,6 @@
-import "package:flutter/material.dart";
-import "package:flutter_app/models/user_info_model.dart";
+import 'package:flutter/material.dart';
+
+import '../models/user_info_model.dart';
 
 class UserInfo extends ChangeNotifier {
 	UserInfoModel _userInfoModel;

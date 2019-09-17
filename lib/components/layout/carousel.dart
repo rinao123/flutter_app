@@ -1,11 +1,14 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
-import "package:flutter_app/controllers/site_controller.dart";
-import "package:flutter_app/models/advice_model.dart";
-import "package:flutter_app/models/layout/carousel_model.dart";
-import "package:flutter_swiper/flutter_swiper.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import 'package:flutter_swiper/flutter_swiper.dart';
+
+import '../../common/utils.dart';
+import '../../components/layout/layout_behaviors_mixin.dart';
+import '../../controllers/site_controller.dart';
+import '../../models/advice_model.dart';
+import '../../models/layout/carousel_model.dart';
+
 
 class Carousel extends StatefulWidget {
 	final CarouselModel model;
@@ -17,12 +20,14 @@ class Carousel extends StatefulWidget {
 }
 
 class CarouselState extends State<Carousel> with LayoutBehaviorsMixin {
+	CarouselModel _model;
 	List<AdviceModel> _advices;
 	int curIndex = 0;
 
 	@override
 	void initState() {
 		super.initState();
+		this._model = widget.model;
 		this.getAdList();
 	}
 
@@ -38,9 +43,8 @@ class CarouselState extends State<Carousel> with LayoutBehaviorsMixin {
 				)
 			);
 		}
-		print(this._advices);
 		return Offstage(
-			offstage: !widget.model.isShow,
+			offstage: !this._model.isShow,
 			child: Container(
 				width: Utils.px2dp(this._advices[0].width),
 				height: Utils.px2dp(this._advices[0].height),
@@ -92,7 +96,7 @@ class CarouselState extends State<Carousel> with LayoutBehaviorsMixin {
 	List<Widget> _buildIndicatorItems() {
 		List<Widget> items = [];
 		for (int i = 0; i < this._advices.length; i++) {
-			Color color = Utils.getColorFromString(i == this.curIndex ? widget.model.indicatorActiveColor : widget.model.indicatorColor);
+			Color color = Utils.getColorFromString(i == this.curIndex ? this._model.indicatorActiveColor : this._model.indicatorColor);
 			items.add(Container(
 				color: color,
 				width: Utils.px2dp(32),
@@ -107,8 +111,16 @@ class CarouselState extends State<Carousel> with LayoutBehaviorsMixin {
 		return items;
 	}
 
+	void show() {
+		this.setState(() => this._model.isShow = true);
+	}
+
+	void hide() {
+		this.setState(() => this._model.isShow = false);
+	}
+
 	void getAdList() async {
-		List<AdviceModel> advices = await SiteController.getAdList(widget.model.code);
+		List<AdviceModel> advices = await SiteController.getAdList(this._model.code);
 		if (advices == null) {
 			return;
 		}

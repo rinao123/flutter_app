@@ -1,8 +1,9 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
-import "package:flutter_app/models/layout/icons_model.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import '../../common/utils.dart';
+import '../../components/layout/layout_behaviors_mixin.dart';
+import '../../models/layout/icons_model.dart';
 
 class Icons extends StatefulWidget {
 	final IconsModel model;
@@ -14,11 +15,18 @@ class Icons extends StatefulWidget {
 }
 
 class IconsState extends State<Icons> with LayoutBehaviorsMixin {
+	IconsModel _model;
+
+	@override
+	void initState() {
+		super.initState();
+		this._model = widget.model;
+	}
 
 	@override
 	Widget build(BuildContext context) {
 		return Offstage(
-			offstage: !widget.model.isShow,
+			offstage: !this._model.isShow,
 			child: Container(
 				color: Utils.getColorFromString("#FFFFFF"),
 				child: Row(
@@ -43,7 +51,7 @@ class IconsState extends State<Icons> with LayoutBehaviorsMixin {
 
 	List<Widget> _buildItems() {
 		List<Widget> items = [];
-		for (IconModel iconModel in widget.model.items) {
+		for (IconModel iconModel in this._model.items) {
 			Widget item  = this._buildItem(iconModel);
 			items.add(item);
 		}
@@ -52,7 +60,7 @@ class IconsState extends State<Icons> with LayoutBehaviorsMixin {
 
 	Widget _buildItem(IconModel iconModel) {
 		return Container(
-			width: Utils.px2dp(710 / widget.model.numPerLine),
+			width: Utils.px2dp(710 / this._model.numPerLine),
 			height: Utils.px2dp(146),
 			child: InkWell(
 				child: Column(
@@ -81,5 +89,13 @@ class IconsState extends State<Icons> with LayoutBehaviorsMixin {
 				}
 			)
 		);
+	}
+
+	void show() {
+		this.setState(() => this._model.isShow = true);
+	}
+
+	void hide() {
+		this.setState(() => this._model.isShow = false);
 	}
 }

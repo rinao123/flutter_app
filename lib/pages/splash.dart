@@ -1,10 +1,10 @@
-import "dart:async";
-import "dart:ui";
+import 'dart:async';
 
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/common/navigation_helper.dart";
-import "package:flutter_app/common/utils.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import '../common/navigation_helper.dart';
+import '../common/utils.dart';
 
 class Splash extends StatefulWidget {
     @override

@@ -1,13 +1,16 @@
-import "package:flutter_app/models/layout/goods_list_model.dart";
-import "package:flutter_app/models/layout/icons_model.dart";
-import "package:flutter_app/models/layout/share_info_model.dart";
-import "package:flutter_app/models/layout/base_model.dart";
-import "package:flutter_app/models/layout/img1_model.dart";
-import "package:flutter_app/models/layout/carousel_model.dart";
-import "package:flutter_app/models/layout/search_model.dart";
-import 'package:flutter_app/models/layout/tabs_view_model.dart';
+import 'package:logging/logging.dart';
+
+import 'goods_list_model.dart';
+import 'icons_model.dart';
+import 'share_info_model.dart';
+import 'base_model.dart';
+import 'img1_model.dart';
+import 'carousel_model.dart';
+import 'search_model.dart';
+import 'tabs_view_model.dart';
 
 class LayoutModel {
+	static final Logger logger = Logger("LayoutModel");
 	String _backgroundColor;
 	String _frontColor;
 	String _title;
@@ -69,14 +72,13 @@ class LayoutModel {
 			case "icons":
 				return IconsModel.fromJson(item);
 			case "goods_list":
-				GoodsListModel goodsListModel = GoodsListModel.fromJson(item);
 				return GoodsListModel.fromJson(item);
 			case "search":
 				return SearchModel.fromJson(item);
 			case "tabs_view":
 				return TabsViewModel.fromJson(item);
 			default:
-				print("getModule unknown module");
+				logger.warning("getModule unknown module");
 				return null;
 		}
 	}

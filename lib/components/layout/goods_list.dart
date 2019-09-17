@@ -1,14 +1,16 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/components/layout/base_goods_list.dart";
-import "package:flutter_app/components/layout/layout_behaviors_mixin.dart";
-import "package:flutter_app/components/layout/list_layout.dart";
-import "package:flutter_app/components/layout/list_layout_event.dart";
-import "package:flutter_app/controllers/goods_controller.dart";
-import "package:flutter_app/models/goods_model.dart";
-import "package:flutter_app/models/layout/base_goods_list_model.dart";
-import "package:flutter_app/models/layout/goods_list_model.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:logging/logging.dart';
+
+import '../../common/utils.dart';
+import '../../components/layout/base_goods_list.dart';
+import '../../components/layout/layout_behaviors_mixin.dart';
+import '../../components/layout/list_layout.dart';
+import '../../components/layout/list_layout_event.dart';
+import '../../controllers/goods_controller.dart';
+import '../../models/goods_model.dart';
+import '../../models/layout/base_goods_list_model.dart';
+import '../../models/layout/goods_list_model.dart';
 
 class GoodsList extends StatefulWidget {
 	final GoodsListModel model;
@@ -21,6 +23,8 @@ class GoodsList extends StatefulWidget {
 }
 
 class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implements ListLayout {
+	static final Logger logger = Logger("GoodsListState");
+	GoodsListModel _model;
 	int _page;
 	List _goodsList;
 	bool _isShowLoading;
@@ -31,8 +35,9 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 
 	@override
 	void initState() {
-		print("goodsList initState");
+		logger.info("goodsList initState");
 		super.initState();
+		this._model = widget.model;
 		this._page = 1;
 		this._isShowLoading = false;
 		this._isReachBottom = false;
@@ -52,42 +57,42 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 			);
 		}
 		BaseGoodsListModel baseGoodsListModel = BaseGoodsListModel();
-		baseGoodsListModel.type = widget.model.type;
-		baseGoodsListModel.goodsStyle = widget.model.goodsStyle;
-		baseGoodsListModel.pageMargin = widget.model.pageMargin;
-		baseGoodsListModel.goodsMargin = widget.model.goodsMargin;
-		baseGoodsListModel.borderRadius = widget.model.borderRadius;
-		baseGoodsListModel.pictureScale = widget.model.pictureScale;
-		baseGoodsListModel.bold = widget.model.bold;
-		baseGoodsListModel.textAlign = widget.model.textAlign;
-		baseGoodsListModel.isShowGoodsName = widget.model.isShowGoodsName;
-		baseGoodsListModel.isShowSubTitle = widget.model.isShowSubTitle;
-		baseGoodsListModel.isShowPrice = widget.model.isShowPrice;
-		baseGoodsListModel.btn = widget.model.btn;
-		baseGoodsListModel.btnTitle = widget.model.btnTitle;
-		baseGoodsListModel.corner = widget.model.corner;
-		baseGoodsListModel.cornerWidth = widget.model.cornerWidth;
-		baseGoodsListModel.cornerHeight = widget.model.cornerHeight;
+		baseGoodsListModel.type = this._model.type;
+		baseGoodsListModel.goodsStyle = this._model.goodsStyle;
+		baseGoodsListModel.pageMargin = this._model.pageMargin;
+		baseGoodsListModel.goodsMargin = this._model.goodsMargin;
+		baseGoodsListModel.borderRadius = this._model.borderRadius;
+		baseGoodsListModel.pictureScale = this._model.pictureScale;
+		baseGoodsListModel.bold = this._model.bold;
+		baseGoodsListModel.textAlign = this._model.textAlign;
+		baseGoodsListModel.isShowGoodsName = this._model.isShowGoodsName;
+		baseGoodsListModel.isShowSubTitle = this._model.isShowSubTitle;
+		baseGoodsListModel.isShowPrice = this._model.isShowPrice;
+		baseGoodsListModel.btn = this._model.btn;
+		baseGoodsListModel.btnTitle = this._model.btnTitle;
+		baseGoodsListModel.corner = this._model.corner;
+		baseGoodsListModel.cornerWidth = this._model.cornerWidth;
+		baseGoodsListModel.cornerHeight = this._model.cornerHeight;
 		baseGoodsListModel.goodsList = this._goodsList;
 		baseGoodsListModel.isShowLoading = this._isShowLoading;
 		baseGoodsListModel.isReachBottom = this._isGoodsListReachBottom;
 		return Offstage(
-			offstage: !widget.model.isShow,
+			offstage: !this._model.isShow,
 			child: BaseGoodsList(baseGoodsListModel)
 		);
 	}
 
 	void _getGoodsList(int page) async {
-		List<GoodsModel> goodsList = await GoodsController.getGoodsList(widget.model.src, page, widget.model.pageSize);
+		List<GoodsModel> goodsList = await GoodsController.getGoodsList(this._model.src, page, this._model.pageSize);
 		if (goodsList == null) {
 			return;
 		}
 		this._page = page;
-		if (goodsList.length == widget.model.pageSize) {
+		if (goodsList.length == this._model.pageSize) {
 			this._page++;
 		}
-		this._isShowLoading = !widget.model.isLoadingControlByPage || widget.model.type == 6;
-		this._isGoodsListReachBottom = goodsList.length < widget.model.pageSize;
+		this._isShowLoading = !this._model.isLoadingControlByPage || this._model.type == 6;
+		this._isGoodsListReachBottom = goodsList.length < this._model.pageSize;
 		this._isReachBottom = this._isGoodsListReachBottom;
 		if (widget.eventListener != null) {
 			widget.eventListener(ListLayoutEvent.LOADED, widget.key);
@@ -110,5 +115,13 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 			return;
 		}
 		this._getGoodsList(this._page);
+	}
+
+	void show() {
+		this.setState(() => this._model.isShow = true);
+	}
+
+	void hide() {
+		this.setState(() => this._model.isShow = false);
 	}
 }

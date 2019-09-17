@@ -1,5 +1,5 @@
-import "package:flutter_app/models/goods_model.dart";
-import "package:flutter_app/models/seckill_info_model.dart";
+import '../goods_model.dart';
+import '../seckill_info_model.dart';
 
 
 class BaseGoodsListModel {

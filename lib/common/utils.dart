@@ -9,7 +9,13 @@ class Utils {
     static double getScreenWidth() => window.physicalSize.width / window.devicePixelRatio;
     static double getScreenHeight() => window.physicalSize.height / window.devicePixelRatio;
     static double getStatusBarHeight(BuildContext context) => MediaQuery.of(context).padding.top;
-    static double px2dp(px) => getScreenWidth() / (DESIGN_WIDTH / window.devicePixelRatio) * px / window.devicePixelRatio;
+    static double px2dp(px, {bool isText: false, BuildContext context}) {
+        double dp = getScreenWidth() / (DESIGN_WIDTH / window.devicePixelRatio) * px / window.devicePixelRatio;
+        if (isText && context != null) {
+            dp = dp / MediaQuery.of(context).textScaleFactor;
+        }
+        return dp;
+    }
 
     static dynamic getDeviceInfo() async {
         DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();

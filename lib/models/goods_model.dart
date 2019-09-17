@@ -1,4 +1,4 @@
-import "package:money/money.dart";
+import 'package:money/money.dart';
 
 class GoodsModel {
 	int _id;

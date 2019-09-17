@@ -1,8 +1,11 @@
-import "package:dio/dio.dart";
-import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/configs/config.dart";
+import 'package:dio/dio.dart';
+import 'package:logging/logging.dart';
+
+import '../common/utils.dart';
+import '../configs/config.dart';
 
 class HttpHelper {
+    static final Logger logger = Logger("HttpHelper");
     static Dio _instance;
     static String _skey;
 
@@ -35,13 +38,13 @@ class HttpHelper {
             return response;
         } on DioError catch (error) {
             if (error.response != null) {
-                print(error.response.statusCode);
-                print(error.response.data);
-                print(error.response.headers);
-                print(error.response.request);
+                logger.warning(error.response.statusCode);
+                logger.warning(error.response.data);
+                logger.warning(error.response.headers);
+                logger.warning(error.response.request);
             } else{
-                print(error.request);
-                print(error.message);
+                logger.warning(error.request);
+                logger.warning(error.message);
             }
         }
     }

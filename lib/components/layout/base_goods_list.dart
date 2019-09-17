@@ -68,10 +68,10 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 		List<Widget> items = [];
 		items.add(this._buildPictureContainer(index));
 		if (this._baseGoodsListModel.isShowGoodsName) {
-			items.add(this._buildGoodsName(index));
+			items.add(this._buildGoodsName(context, index));
 		}
 		if (this._baseGoodsListModel.isShowGoodsName) {
-			items.add(this._buildSubTile(index));
+			items.add(this._buildSubTile(context, index));
 		}
 		items.add(this._buildBottom(context, index));
 		return Container(
@@ -124,7 +124,7 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 		);
 	}
 
-	Widget _buildGoodsName(int index) {
+	Widget _buildGoodsName(BuildContext context, int index) {
 		double width = this._getItemWidth(index);
 		int maxLines = 2;
 		GoodsModel goods = this._baseGoodsListModel.goodsList[index];
@@ -138,7 +138,7 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 				maxLines: maxLines,
 				overflow: TextOverflow.ellipsis,
 				style: TextStyle(
-					fontSize: Utils.px2dp(28),
+					fontSize: Utils.px2dp(28, isText: true, context: context),
 					fontWeight: this._baseGoodsListModel.bold ? FontWeight.bold : FontWeight.normal,
 					color: Utils.getColorFromString("#333333")
 				)
@@ -146,7 +146,7 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 		);
 	}
 
-	Widget _buildSubTile(int index) {
+	Widget _buildSubTile(BuildContext context, int index) {
 		double width = this._getItemWidth(index);
 		GoodsModel goods = this._baseGoodsListModel.goodsList[index];
 		return Container(
@@ -157,7 +157,7 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 				textAlign: this._baseGoodsListModel.textAlign == "center" ? TextAlign.center : TextAlign.left,
 				overflow: TextOverflow.ellipsis,
 				style: TextStyle(
-					fontSize: Utils.px2dp(28),
+					fontSize: Utils.px2dp(28, isText: true, context: context),
 					color: Utils.getColorFromString("#999999")
 				)
 			)
@@ -192,7 +192,7 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 				child: Text(
 					"¥${Utils.removeLastZero(goods.promotionPrice.amountAsString)}",
 					style: TextStyle(
-						fontSize: Utils.px2dp(32),
+						fontSize: Utils.px2dp(32, isText: true, context: context),
 						fontWeight: this._baseGoodsListModel.bold ? FontWeight.bold : FontWeight.normal,
 						color: Utils.getColorFromString(themeModel.mainColor)
 					)

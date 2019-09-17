@@ -1,11 +1,10 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Member extends StatefulWidget {
+
 	@override
-	State<StatefulWidget> createState() {
-		return _MemberState();
-	}
+	State<StatefulWidget> createState() => _MemberState();
 }
 
 class _MemberState extends State<Member> {
@@ -22,9 +21,9 @@ class _MemberState extends State<Member> {
 					),
 				),
 				body: Column(
-						children: <Widget>[
-							Text("Member")
-						]
+					children: <Widget>[
+						Text("Member")
+					]
 				)
 		);
 	}

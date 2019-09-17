@@ -1,11 +1,10 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class MyInfo extends StatefulWidget {
+
 	@override
-	State<StatefulWidget> createState() {
-		return _MyInfoState();
-	}
+	State<StatefulWidget> createState() => _MyInfoState();
 }
 
 class _MyInfoState extends State<MyInfo> {

@@ -1,5 +1,5 @@
-import "package:flutter_app/configs/config.dart";
-import "package:flutter_app/common/http_helper.dart";
+import '../configs/config.dart';
+import '../common/http_helper.dart';
 
 class GoodsApi {
 

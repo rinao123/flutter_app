@@ -1,6 +1,7 @@
-import "package:flutter/material.dart";
-import "package:flutter_app/configs/config.dart";
-import "package:flutter_app/models/theme_model.dart";
+import 'package:flutter/material.dart';
+
+import '../configs/config.dart';
+import '../models/theme_model.dart';
 
 class ThemeProvider extends ChangeNotifier {
 	ThemeModel _themeModel;

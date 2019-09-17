@@ -1,11 +1,10 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Recommend extends StatefulWidget {
+
 	@override
-	State<StatefulWidget> createState() {
-		return _RecommendState();
-	}
+	State<StatefulWidget> createState() => _RecommendState();
 }
 
 class _RecommendState extends State<Recommend> {

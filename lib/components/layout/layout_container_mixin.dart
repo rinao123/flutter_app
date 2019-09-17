@@ -1,28 +1,28 @@
-import "package:flutter/widgets.dart";
-import "package:flutter_app/components/layout/carousel.dart";
-import "package:flutter_app/components/layout/goods_list.dart";
-import "package:flutter_app/components/layout/icons.dart";
-import "package:flutter_app/components/layout/img1.dart";
-import "package:flutter_app/components/layout/list_layout.dart";
-import "package:flutter_app/components/layout/search.dart";
-import "package:flutter_app/components/layout/tabs_view.dart";
-import "package:flutter_app/components/loading.dart";
-import "package:flutter_app/controllers/site_controller.dart";
-import "package:flutter_app/models/layout/base_model.dart";
-import "package:flutter_app/models/layout/carousel_model.dart";
-import "package:flutter_app/models/layout/goods_list_model.dart";
-import "package:flutter_app/models/layout/icons_model.dart";
-import "package:flutter_app/models/layout/img1_model.dart";
-import "package:flutter_app/models/layout/layout_model.dart";
-import "package:flutter_app/models/layout/list_model.dart";
-import "package:flutter_app/models/layout/search_model.dart";
-import "package:flutter_app/models/layout/tabs_view_model.dart";
+import 'package:flutter/widgets.dart';
+import 'package:logging/logging.dart';
+
+import '../../components/layout/carousel.dart';
+import '../../components/layout/goods_list.dart';
+import '../../components/layout/icons.dart';
+import '../../components/layout/img1.dart';
+import '../../components/layout/search.dart';
+import '../../components/layout/tabs_view.dart';
+import '../../controllers/site_controller.dart';
+import '../../models/layout/base_model.dart';
+import '../../models/layout/carousel_model.dart';
+import '../../models/layout/goods_list_model.dart';
+import '../../models/layout/icons_model.dart';
+import '../../models/layout/img1_model.dart';
+import '../../models/layout/layout_model.dart';
+import '../../models/layout/list_model.dart';
+import '../../models/layout/search_model.dart';
+import '../../models/layout/tabs_view_model.dart';
 
 class LayoutContainerMixin {
+	static final Logger logger = Logger("LayoutContainerMixin");
 	bool isChild;
 	State state;
 	List<Map> items;
-	bool isLoading;
 
 	Future<LayoutModel> getLayouts(String code) async {
 		LayoutModel layoutModel = await SiteController.getLayoutByCode(code);
@@ -56,23 +56,27 @@ class LayoutContainerMixin {
 	Map getLayoutWidget(BaseModel model) {
 		switch (model.runtimeType) {
 			case CarouselModel:
-				return {"key": null, "widget": Carousel(model: model)};
+				GlobalKey<CarouselState> key = GlobalKey<CarouselState>();
+				return {"key": key, "widget": Carousel(model: model)};
 			case Img1Model:
-				return {"key": null, "widget": Img1(model: model)};
+				GlobalKey<Img1State> key = GlobalKey<Img1State>();
+				return {"key": key, "widget": Img1(key: key, model: model)};
 			case IconsModel:
-				return {"key": null, "widget": Icons(model: model)};
+				GlobalKey<IconsState> key = GlobalKey<IconsState>();
+				return {"key": key, "widget": Icons(model: model)};
 			case GoodsListModel:
 				GlobalKey<GoodsListState> key = GlobalKey<GoodsListState>();
 				GoodsListModel goodsListModel = model as GoodsListModel;
 				goodsListModel.isLoadingControlByPage = true;
 				return {"key": key, "widget": GoodsList(key: key, model: model, eventListener: this.onListEvent)};
 			case SearchModel:
-				return {"key": null, "widget": Search(model: model)};
+				GlobalKey<SearchState> key = GlobalKey<SearchState>();
+				return {"key": key, "widget": Search(model: model)};
 			case TabsViewModel:
 				GlobalKey<TabsViewState> key = GlobalKey<TabsViewState>();
 				return {"key": key, "widget": TabsView(key: key, model: model, eventListener: this.onListEvent)};
 			default:
-				print("_buildBodyItem unknown module");
+				logger.warning("getLayoutWidget unknown module");
 				return null;
 		}
 	}
@@ -80,26 +84,4 @@ class LayoutContainerMixin {
 	void onListEvent(int event, Key key) {
 
 	}
-
-	void showLoading() {
-		this.isLoading = true;
-		for (Map item in this.items) {
-			if (item["key"] != null && item["widget"] is Loading) {
-				item["key"].currentState.show();
-				break;
-			}
-		}
-	}
-
-	void hideLoading() {
-		this.isLoading = false;
-		for (Map item in this.items) {
-			if (item["key"] != null && item["widget"] is Loading && item["key"].currentState != null) {
-				item["key"].currentState.hide();
-				break;
-			}
-		}
-	}
-
-
 }

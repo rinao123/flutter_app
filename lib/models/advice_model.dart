@@ -1,5 +1,7 @@
+import 'package:logging/logging.dart';
 
 class AdviceModel {
+	static final Logger logger = Logger("AdviceModel");
 	int _id;
 	int _adposId;
 	String _picUrl;
@@ -68,7 +70,7 @@ class AdviceModel {
 				case "special":
 					return "/pages/special/special?code=$link";
 				default:
-					print("getLink known schema");
+					logger.warning("getLink unknown schema");
 					return "";
 			}
 		} else {

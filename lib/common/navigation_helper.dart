@@ -1,16 +1,21 @@
-import "package:flutter/cupertino.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/pages/goods_detail.dart";
-import "package:flutter_app/pages/home.dart";
-import "package:flutter_app/pages/index.dart";
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_app/pages/cart.dart';
+import 'package:flutter_app/pages/goods_detail.dart';
+import 'package:flutter_app/pages/home.dart';
+import 'package:flutter_app/pages/index.dart';
 import 'package:flutter_app/pages/login.dart';
-import "package:flutter_app/pages/member.dart";
-import "package:flutter_app/pages/cart.dart";
-import "package:flutter_app/pages/my_info.dart";
-import "package:flutter_app/pages/recommend.dart";
-import "package:flutter_app/pages/special.dart";
+import 'package:flutter_app/pages/member.dart';
+import 'package:flutter_app/pages/my_info.dart';
+import 'package:flutter_app/pages/recommend.dart';
+import 'package:flutter_app/pages/special.dart';
+import 'package:logging/logging.dart';
+
+
 
 class NavigationHelper {
+    static final Logger logger = Logger("NavigationHelper");
+
     static getPage(String path, {Map<String, dynamic> params}) {
         switch (path) {
             case "/pages/login/login":
@@ -29,19 +34,19 @@ class NavigationHelper {
                 return MyInfo();
             case "/pages/special/special":
                 if (!params.containsKey("code")) {
-                    print("getPage Special code is null");
+                    logger.warning("getPage Special code is null");
                     return null;
                 }
                 return Special(params["code"]);
             case "/pages/goods_detail/goods_detail":
                 if (!params.containsKey("id")) {
-                    print("getPage GoodsDetail id is null");
+                    logger.warning("getPage GoodsDetail id is null");
                     return null;
                 }
                 int id = int.parse(params["id"]);
                 return GoodsDetail(id);
             default:
-                print("NavigationHelper invalid path");
+                logger.warning("getPage unknown path");
         }
     }
 
@@ -50,7 +55,7 @@ class NavigationHelper {
         Map<String, String> params = getParams(url);
         var page = getPage(path, params: params);
         if (page == null) {
-            print("navigateTo page is null");
+            logger.warning("navigateTo page is null");
             return;
         }
         Navigator.push(context, CupertinoPageRoute(
@@ -65,7 +70,7 @@ class NavigationHelper {
         Map<String, String> params = getParams(url);
         var page = getPage(path, params: params);
         if (page == null) {
-            print("navigateTo page is null");
+            logger.warning("navigateTo page is null");
             return;
         }
         Navigator.pushReplacement(context, PageRouteBuilder(

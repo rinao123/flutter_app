@@ -1,8 +1,9 @@
-import "dart:io";
+import 'dart:io';
 
-import "package:dio/dio.dart";
-import "package:flutter_app/configs/config.dart";
-import "package:flutter_app/common/http_helper.dart";
+import 'package:dio/dio.dart';
+
+import '../configs/config.dart';
+import '../common/http_helper.dart';
 
 class AuthApi {
     static final String loginUrl = "${Config.GATEWAY}/auth/app_login";

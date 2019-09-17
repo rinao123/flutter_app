@@ -1,22 +1,16 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class GoodsDetail extends StatefulWidget {
-	final int _id;
+	final int id;
 
-	GoodsDetail(this._id);
+	GoodsDetail(this.id);
 
 	@override
-	State<StatefulWidget> createState() {
-		return _GoodsDetailState(this._id);
-	}
+	State<StatefulWidget> createState() => _GoodsDetailState();
 }
 
 class _GoodsDetailState extends State<GoodsDetail> {
-
-	int _id;
-
-	_GoodsDetailState(this._id);
 
 	@override
 	Widget build(BuildContext context) {
@@ -32,7 +26,7 @@ class _GoodsDetailState extends State<GoodsDetail> {
 			),
 			body: Column(
 				children: <Widget>[
-					Text("GoodsDetail")
+					Text("GoodsDetail ${widget.id}")
 				]
 			)
 		);

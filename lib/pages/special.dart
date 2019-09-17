@@ -1,27 +1,14 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/components/layout_page.dart";
+import 'package:flutter/widgets.dart';
 
-class Special extends StatefulWidget {
-	final String _code;
+import '../components/layout.dart';
 
-	Special(this._code);
+class Special extends StatelessWidget {
+	final String code;
 
-	@override
-	State<StatefulWidget> createState() {
-		return _SpecialState(this._code);
-	}
-}
-
-class _SpecialState extends State<Special> {
-	String _code;
-
-	_SpecialState(String code) {
-		this._code = code;
-	}
+	Special(this.code);
 
 	@override
 	Widget build(BuildContext context) {
-		return LayoutPage(this._code);
+		return Layout(this.code);
 	}
 }

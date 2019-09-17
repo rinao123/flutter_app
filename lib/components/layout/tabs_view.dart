@@ -1,19 +1,18 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/components/layout.dart";
-import "package:flutter_app/components/layout/layout_container_mixin.dart";
-import "package:flutter_app/components/layout/list_layout.dart";
-import "package:flutter_app/components/layout/list_layout_event.dart";
-import "package:flutter_app/controllers/site_controller.dart";
-import "package:flutter_app/models/layout/base_model.dart";
-import "package:flutter_app/models/layout/layout_model.dart";
-import "package:flutter_app/models/layout/list_model.dart";
-import "package:flutter_app/models/layout/tabs_view_model.dart";
-import "package:flutter_app/models/theme_model.dart";
-import "package:flutter_app/provider/theme_provider.dart";
-import "package:flutter_sticky_header/flutter_sticky_header.dart";
-import "package:provider/provider.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:logging/logging.dart';
+
+import 'package:provider/provider.dart';
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+
+import '../../common/utils.dart';
+import '../../components/layout/layout_container_mixin.dart';
+import '../../components/layout/list_layout.dart';
+import '../../components/layout/list_layout_event.dart';
+import '../../models/layout/layout_model.dart';
+import '../../models/layout/tabs_view_model.dart';
+import '../../models/theme_model.dart';
+import '../../provider/theme_provider.dart';
 
 class TabsView extends StatefulWidget {
 	final TabsViewModel model;
@@ -26,6 +25,8 @@ class TabsView extends StatefulWidget {
 }
 
 class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin, LayoutContainerMixin implements ListLayout {
+	static final Logger logger = Logger("TabsViewState");
+	TabsViewModel _model;
 	int _index;
 	TabController _tabController;
 	List<Widget> _contents;
@@ -35,12 +36,13 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 
 	@override
 	void initState() {
-		print("TabsView initState");
+		logger.info("TabsView initState");
 		super.initState();
 		this.isChild = true;
+		this._model = widget.model;
 		this._index = 0;
 		this._tabController = TabController(
-			length: widget.model.items.length,
+			length: this._model.items.length,
 			vsync: this
 		);
 		this._tabController.addListener(() {
@@ -66,8 +68,8 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 	}
 
 	Widget _buildTabs(BuildContext context) {
-		double tabWidth = Utils.DESIGN_WIDTH / widget.model.items.length;
-		if (widget.model.items.length >= 5) {
+		double tabWidth = Utils.DESIGN_WIDTH / this._model.items.length;
+		if (this._model.items.length >= 5) {
 			tabWidth = 140;
 		}
 		ThemeModel themeModel = Provider.of<ThemeProvider>(context).getThemeModel();
@@ -81,16 +83,16 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 			child: TabBar(
 				isScrollable: true,
 				controller: this._tabController,
-				unselectedLabelStyle: TextStyle(fontSize: Utils.px2dp(28)),
+				unselectedLabelStyle: TextStyle(fontSize: Utils.px2dp(28, isText: true, context: context)),
 				unselectedLabelColor: Utils.getColorFromString("#333333"),
-				labelStyle: TextStyle(fontSize: Utils.px2dp(30), fontWeight: FontWeight.bold),
+				labelStyle: TextStyle(fontSize: Utils.px2dp(30, isText: true, context: context), fontWeight: FontWeight.bold),
 				labelColor: Utils.getColorFromString(themeModel.mainColor),
 				labelPadding: EdgeInsets.all(0),
 				indicator: UnderlineTabIndicator(
 					borderSide: BorderSide(width: Utils.px2dp(6), color: Utils.getColorFromString(themeModel.mainColor)),
 					insets: EdgeInsets.symmetric(horizontal: Utils.px2dp((tabWidth - 32) / 2))
 				),
-				tabs: widget.model.items.map((item) {
+				tabs: this._model.items.map((item) {
 					return Tab(
 						child: Container(
 							width: Utils.px2dp(tabWidth),
@@ -123,7 +125,7 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 	}
 
 	void _getLayouts() async {
-		String code = widget.model.items[this._index].code;
+		String code = this._model.items[this._index].code;
 		LayoutModel layoutModel = await this.getLayouts(code);
 		List<Map> items = [];
 		if (layoutModel != null) {
@@ -159,5 +161,13 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 		if (widget.eventListener != null) {
 			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
 		}
+	}
+
+	void show() {
+		this.setState(() => this._model.isShow = true);
+	}
+
+	void hide() {
+		this.setState(() => this._model.isShow = false);
 	}
 }

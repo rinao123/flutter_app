@@ -5,24 +5,22 @@ import "package:flutter_app/common/utils.dart";
 import "package:flutter_app/common//navigation_helper.dart";
 
 class Home extends StatefulWidget {
-
     final int curIndex;
 
     Home({this.curIndex = 0});
 
     @override
-    State<StatefulWidget> createState() {
-        return _HomeState(index: this.curIndex);
-    }
+    State<StatefulWidget> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-
     int _curIndex;
     List<Widget> _pages = [];
 
-    _HomeState({int index = 0}) {
-        this._curIndex = index;
+    @override
+    void initState() {
+        super.initState();
+        this._curIndex = widget.curIndex;
         this._pages = [];
         for (Map<String, String> item in Config.TAB_BAR["list"]) {
             Widget page = NavigationHelper.getPage(item["pagePath"]);
@@ -34,7 +32,7 @@ class _HomeState extends State<Home> {
     Widget build(BuildContext context) {
         return Scaffold(
             body: IndexedStack(
-                index:this._curIndex,
+                index: this._curIndex,
                 children: this._pages
             ),
             bottomNavigationBar: this._buildBottomNavigationBar()

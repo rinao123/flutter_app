@@ -1,7 +1,8 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
-import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/models/layout/search_model.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
+import '../../common/utils.dart';
+import '../../models/layout/search_model.dart';
 
 class Search extends StatefulWidget {
 	final SearchModel model;
@@ -13,6 +14,13 @@ class Search extends StatefulWidget {
 }
 
 class SearchState extends State<Search> {
+	SearchModel _model;
+
+	@override
+	void initState() {
+		super.initState();
+		this._model = widget.model;
+	}
 
 	@override
 	Widget build(BuildContext context) {
@@ -45,7 +53,7 @@ class SearchState extends State<Search> {
 											color: Utils.getColorFromString("#333333")
 										),
 										decoration: InputDecoration(
-											hintText: widget.model.title,
+											hintText: this._model.title,
 											hintStyle: TextStyle(
 												color: Utils.getColorFromString("rgba(51, 51, 51, 0.6)")
 											),
@@ -61,4 +69,12 @@ class SearchState extends State<Search> {
 			)
 		);
   	}
+
+	void show() {
+		this.setState(() => this._model.isShow = true);
+	}
+
+	void hide() {
+		this.setState(() => this._model.isShow = false);
+	}
 }
