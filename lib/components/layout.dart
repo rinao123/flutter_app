@@ -140,7 +140,11 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 	}
 
 	void _getLayouts() async {
-		this.setState(() => this._layoutModel = null);
+		this.setState(() {
+			if (this._layoutModel != null) {
+				this._layoutModel.modules = [];
+			}
+		});
 		LayoutModel layoutModel = await this.getLayouts(widget.code);
 		List<Map> items = [];
 		if (layoutModel != null) {
