@@ -28,112 +28,55 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 	static final Logger logger = Logger("TabsViewState");
 	TabsViewModel _model;
 	int _index;
-	TabController _tabController;
-	List<Widget> _contents;
-	bool _isReachBottom;
+	TabController _controller;
+	List<Map> _items;
 
-	bool get isReachBottom => this._isReachBottom;
+	bool get isReachBottom {
+		bool isReachBottom = true;
+		if (this._items[this._index]["key"].currentState != null) {
+			isReachBottom = this._items[this._index]["key"].currentState.isReachBottom;
+		}
+		return isReachBottom;
+	}
 
 	@override
 	void initState() {
 		logger.info("TabsView initState");
 		super.initState();
-		this.isChild = true;
 		this._model = widget.model;
 		this._index = 0;
-		this._tabController = TabController(
+		this._controller = TabController(
 			length: this._model.items.length,
 			vsync: this
 		);
-		this._tabController.addListener(() {
-			if (this._tabController.indexIsChanging) {
+		this._controller.addListener(() {
+			if (this._controller.indexIsChanging) {
 				this.setState(() {
-					this._index = this._tabController.index;
-					this._getLayouts();
+					this._index = this._controller.index;
 				});
 			}
 		});
-		this.items = [];
-		this._contents = [];
-		this._isReachBottom = false;
-		this._getLayouts();
+		this._items = this._getItems();
 	}
 
 	@override
 	Widget build(BuildContext context) {
+		Widget content = this._items[this._index]["widget"];
 		return SliverStickyHeader(
-			header: this._buildTabs(context),
-			sliver:this._buildLayout()
+			header: _Tabs(items: widget.model.items, controller: this._controller),
+			sliver: content
 		);
 	}
 
-	Widget _buildTabs(BuildContext context) {
-		double tabWidth = Utils.DESIGN_WIDTH / this._model.items.length;
-		if (this._model.items.length >= 5) {
-			tabWidth = 140;
-		}
-		ThemeModel themeModel = Provider.of<ThemeProvider>(context).getThemeModel();
-		return Container(
-			width: Utils.px2dp(Utils.DESIGN_WIDTH),
-			height: Utils.px2dp(60),
-			decoration: BoxDecoration(
-				color: Utils.getColorFromString("#ffffff"),
-				border: Border(bottom: BorderSide(color: Utils.getColorFromString("#f1f1f1")))
-			),
-			child: TabBar(
-				isScrollable: true,
-				controller: this._tabController,
-				unselectedLabelStyle: TextStyle(fontSize: Utils.px2dp(28, isText: true, context: context)),
-				unselectedLabelColor: Utils.getColorFromString("#333333"),
-				labelStyle: TextStyle(fontSize: Utils.px2dp(30, isText: true, context: context), fontWeight: FontWeight.bold),
-				labelColor: Utils.getColorFromString(themeModel.mainColor),
-				labelPadding: EdgeInsets.all(0),
-				indicator: UnderlineTabIndicator(
-					borderSide: BorderSide(width: Utils.px2dp(6), color: Utils.getColorFromString(themeModel.mainColor)),
-					insets: EdgeInsets.symmetric(horizontal: Utils.px2dp((tabWidth - 32) / 2))
-				),
-				tabs: this._model.items.map((item) {
-					return Tab(
-						child: Container(
-							width: Utils.px2dp(tabWidth),
-							child: Center(
-								child: Text(item.title)
-							)
-						)
-					);
-				}).toList()
-			)
-		);
-	}
-
-	Widget _buildLayout() {
-		List<Widget> list = [];
-		for (Map item in this.items) {
-			Widget widget = item["widget"];
-			if (widget.runtimeType != TabsView) {
-				list.add(widget);
-			}
-		}
-		return SliverList(
-			delegate: SliverChildBuilderDelegate(
-				(BuildContext context, int index) {
-					return list[index];
-				},
-				childCount: list.length
-			)
-		);
-	}
-
-	void _getLayouts() async {
-		String code = this._model.items[this._index].code;
-		LayoutModel layoutModel = await this.getLayouts(code);
+	List<Map> _getItems() {
 		List<Map> items = [];
-		if (layoutModel != null) {
-			items = this.getLayoutWidgets(layoutModel.modules);
+		for (TabViewModel item in this._model.items) {
+			GlobalKey<_ContentState> key = GlobalKey<_ContentState>();
+			logger.info(item.code);
+			Widget widget = _Content(code: item.code);
+			items.add({"key": key, "widget": widget});
 		}
-		this.setState(() {
-			this.items = items;
-		});
+		return items;
 	}
 
 	void onListEvent(int event, Key key) {
@@ -148,16 +91,15 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 
 	@override
 	void onReachBottom() {
-		if (this._isReachBottom) {
+		if (this.isReachBottom) {
 			return;
 		}
-		for (Map item in this.items) {
+		for (Map item in this._items) {
 			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
 				item["key"].currentState.onReachBottom();
 				return;
 			}
 		}
-		this._isReachBottom = true;
 		if (widget.eventListener != null) {
 			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
 		}
@@ -169,5 +111,122 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 
 	void hide() {
 		this.setState(() => this._model.isShow = false);
+	}
+}
+
+class _Tabs extends StatelessWidget {
+	final List<TabViewModel> items;
+	final TabController controller;
+	_Tabs({@required this.items, @required this.controller});
+
+	Widget build(BuildContext context) {
+		double tabWidth = Utils.DESIGN_WIDTH / this.items.length;
+		if (this.items.length >= 5) {
+			tabWidth = 140;
+		}
+		ThemeModel themeModel = Provider.of<ThemeProvider>(context).getThemeModel();
+		return Container(
+			width: Utils.px2dp(Utils.DESIGN_WIDTH),
+			height: Utils.px2dp(60),
+			decoration: BoxDecoration(
+				color: Utils.getColorFromString("#ffffff"),
+				border: Border(bottom: BorderSide(color: Utils.getColorFromString("#f1f1f1")))
+			),
+			child: TabBar(
+				isScrollable: true,
+				controller: this.controller,
+				unselectedLabelStyle: TextStyle(fontSize: Utils.px2dp(28, isText: true, context: context)),
+				unselectedLabelColor: Utils.getColorFromString("#333333"),
+				labelStyle: TextStyle(fontSize: Utils.px2dp(30, isText: true, context: context), fontWeight: FontWeight.bold),
+				labelColor: Utils.getColorFromString(themeModel.mainColor),
+				labelPadding: EdgeInsets.all(0),
+				indicator: UnderlineTabIndicator(
+					borderSide: BorderSide(width: Utils.px2dp(6), color: Utils.getColorFromString(themeModel.mainColor)),
+					insets: EdgeInsets.symmetric(horizontal: Utils.px2dp((tabWidth - 32) / 2))
+				),
+				tabs: this.items.map((item) {
+					return Tab(
+						child: Container(
+							width: Utils.px2dp(tabWidth),
+							child: Center(
+								child: Text(item.title)
+							)
+						)
+					);
+				}).toList()
+			)
+		);
+	}
+}
+
+class _Content extends StatefulWidget {
+	final String code;
+
+	_Content({Key key, @required this.code}) : super(key: key);
+
+	@override
+	State<StatefulWidget> createState() => _ContentState();
+}
+
+class _ContentState extends State<_Content> with LayoutContainerMixin implements ListLayout {
+	static final Logger logger = Logger("_ContentState");
+	LayoutModel _layoutModel;
+	List<Map> _items;
+	bool _isReachBottom;
+
+	bool get isReachBottom => this._isReachBottom;
+
+	@override
+	void initState() {
+		logger.info(widget.code);
+		super.initState();
+		this._items = [];
+		this._isReachBottom = false;
+		this._getLayouts();
+	}
+
+	@override
+	Widget build(BuildContext context) {
+		List<Widget> list = [];
+		for (Map item in this._items) {
+			Widget widget = item["widget"];
+			if (widget.runtimeType != TabsView) {
+				list.add(widget);
+			}
+		}
+		return SliverList(delegate: SliverChildBuilderDelegate((BuildContext context, int index) => list[index], childCount: list.length));
+	}
+
+	void _getLayouts() async {
+		this.setState(() {
+			if (this._layoutModel != null) {
+				this._layoutModel.modules = [];
+			}
+		});
+		LayoutModel layoutModel = await this.getLayouts(widget.code);
+		List<Map> items = [];
+		if (layoutModel != null) {
+			items = this.getLayoutWidgets(layoutModel.modules);
+		}
+		this.setState(() {
+			this._layoutModel = layoutModel;
+			this._items = items;
+		});
+	}
+
+	@override
+	void onReachBottom() {
+		if (this.isReachBottom) {
+		  	return;
+		}
+		for (Map item in this._items) {
+			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
+				item["key"].currentState.onReachBottom();
+				return;
+			}
+		}
+//		if (widget.eventListener != null) {
+//			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
+//		}
 	}
 }

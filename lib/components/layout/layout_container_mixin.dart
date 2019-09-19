@@ -20,9 +20,6 @@ import '../../models/layout/tabs_view_model.dart';
 
 class LayoutContainerMixin {
 	static final Logger logger = Logger("LayoutContainerMixin");
-	bool isChild;
-	State state;
-	List<Map> items;
 
 	Future<LayoutModel> getLayouts(String code) async {
 		LayoutModel layoutModel = await SiteController.getLayoutByCode(code);
@@ -42,9 +39,6 @@ class LayoutContainerMixin {
 	List<Map> getLayoutWidgets(List<BaseModel> models) {
 		List<Map> items = [];
 		for (BaseModel model in models) {
-			if (!model.isShow) {
-				break;
-			}
 			Map item = this.getLayoutWidget(model);
 			if (item != null) {
 				items.add(item);

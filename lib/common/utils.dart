@@ -75,7 +75,7 @@ class Utils {
 
     static Future<String> getSkey() async {
         SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-        String skey = (sharedPreferences.getString("skey") ?? "");
+        String skey = sharedPreferences.getString("skey") ?? "";
         return skey;
     }
 

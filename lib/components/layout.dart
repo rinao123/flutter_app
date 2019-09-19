@@ -21,8 +21,8 @@ class Layout extends StatefulWidget {
 
 class _LayoutState extends State<Layout> with LayoutContainerMixin {
 	LayoutModel _layoutModel;
+	List<Map> items;
 	RefreshController _refreshController;
-
 
 	@override
 	void initState() {
