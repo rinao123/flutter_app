@@ -1,22 +1,22 @@
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 
-import '../../components/layout/carousel.dart';
-import '../../components/layout/goods_list.dart';
-import '../../components/layout/icons.dart';
-import '../../components/layout/img1.dart';
-import '../../components/layout/search.dart';
-import '../../components/layout/tabs_view.dart';
-import '../../controllers/site_controller.dart';
-import '../../models/layout/base_model.dart';
-import '../../models/layout/carousel_model.dart';
-import '../../models/layout/goods_list_model.dart';
-import '../../models/layout/icons_model.dart';
-import '../../models/layout/img1_model.dart';
-import '../../models/layout/layout_model.dart';
-import '../../models/layout/list_model.dart';
-import '../../models/layout/search_model.dart';
-import '../../models/layout/tabs_view_model.dart';
+import 'carousel.dart';
+import 'goods_list.dart';
+import 'icons.dart';
+import 'img1.dart';
+import 'search.dart';
+import 'tabs_view.dart';
+import '../controllers/site_controller.dart';
+import 'package:flutter_app/models/base_model.dart';
+import 'package:flutter_app/models/carousel_model.dart';
+import 'package:flutter_app/models/goods_list_model.dart';
+import 'package:flutter_app/models/icons_model.dart';
+import 'package:flutter_app/models/img1_model.dart';
+import 'package:flutter_app/models/layout_model.dart';
+import 'package:flutter_app/models/list_model.dart';
+import 'package:flutter_app/models/search_model.dart';
+import 'package:flutter_app/models/tabs_view_model.dart';
 
 class LayoutContainerMixin {
 	static final Logger logger = Logger("LayoutContainerMixin");

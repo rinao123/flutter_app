@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../common/utils.dart';
-import '../../models/layout/search_model.dart';
+import '../common/utils.dart';
+import 'package:flutter_app/models/search_model.dart';
 
 class Search extends StatefulWidget {
 	final SearchModel model;

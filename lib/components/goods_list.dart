@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 
-import '../../common/utils.dart';
-import '../../components/layout/base_goods_list.dart';
-import '../../components/layout/layout_behaviors_mixin.dart';
-import '../../components/layout/list_layout.dart';
-import '../../components/layout/list_layout_event.dart';
-import '../../controllers/goods_controller.dart';
-import '../../models/goods_model.dart';
-import '../../models/layout/base_goods_list_model.dart';
-import '../../models/layout/goods_list_model.dart';
+import 'base_goods_list.dart';
+import 'layout_behaviors_mixin.dart';
+import 'list_layout.dart';
+import 'list_layout_event.dart';
+import '../common/utils.dart';
+import '../controllers/goods_controller.dart';
+import '../models/goods_model.dart';
+import 'package:flutter_app/models/base_goods_list_model.dart';
+import 'package:flutter_app/models/goods_list_model.dart';
 
 class GoodsList extends StatefulWidget {
 	final GoodsListModel model;

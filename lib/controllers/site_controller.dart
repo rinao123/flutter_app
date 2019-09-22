@@ -3,7 +3,7 @@ import 'package:logging/logging.dart';
 
 import '../apis/site_api.dart';
 import '../models/advice_model.dart';
-import '../models/layout/layout_model.dart';
+import 'package:flutter_app/models/layout_model.dart';
 
 class SiteController {
 	static final Logger logger = Logger("SiteController");

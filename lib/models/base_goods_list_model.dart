@@ -1,5 +1,5 @@
-import '../goods_model.dart';
-import '../seckill_info_model.dart';
+import 'goods_model.dart';
+import 'seckill_info_model.dart';
 
 
 class BaseGoodsListModel {

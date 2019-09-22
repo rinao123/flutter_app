@@ -2,12 +2,15 @@ import "package:flutter/material.dart";
 import "package:flutter/rendering.dart";
 import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
-import "package:flutter_app/common/utils.dart";
-import "package:flutter_app/components/layout/layout_container_mixin.dart";
-import "package:flutter_app/components/layout/list_layout.dart";
-import "package:flutter_app/components/layout/list_layout_event.dart";
-import "package:flutter_app/components/layout/tabs_view.dart";
-import "package:flutter_app/models/layout/layout_model.dart";
+
+import "layout_container_mixin.dart";
+import "list_layout.dart";
+import "list_layout_event.dart";
+import "tabs_view.dart";
+import "../common/utils.dart";
+import "package:flutter_app/models/layout_model.dart";
+
+import "package:logging/logging.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
 
 class Layout extends StatefulWidget {
@@ -20,6 +23,7 @@ class Layout extends StatefulWidget {
 }
 
 class _LayoutState extends State<Layout> with LayoutContainerMixin {
+	static final Logger logger = Logger("_LayoutState");
 	LayoutModel _layoutModel;
 	List<Map> items;
 	RefreshController _refreshController;

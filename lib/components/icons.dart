@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../common/utils.dart';
-import '../../components/layout/layout_behaviors_mixin.dart';
-import '../../models/layout/icons_model.dart';
+import 'layout_behaviors_mixin.dart';
+import '../common/utils.dart';
+import 'package:flutter_app/models/icons_model.dart';
 
 class Icons extends StatefulWidget {
 	final IconsModel model;

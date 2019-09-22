@@ -3,11 +3,11 @@ import 'package:flutter/widgets.dart';
 
 import 'package:flutter_swiper/flutter_swiper.dart';
 
-import '../../common/utils.dart';
-import '../../components/layout/layout_behaviors_mixin.dart';
-import '../../controllers/site_controller.dart';
-import '../../models/advice_model.dart';
-import '../../models/layout/carousel_model.dart';
+import 'layout_behaviors_mixin.dart';
+import '../common/utils.dart';
+import '../controllers/site_controller.dart';
+import '../models/advice_model.dart';
+import 'package:flutter_app/models/carousel_model.dart';
 
 
 class Carousel extends StatefulWidget {

@@ -5,14 +5,14 @@ import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 
-import '../../common/utils.dart';
-import '../../components/layout/layout_container_mixin.dart';
-import '../../components/layout/list_layout.dart';
-import '../../components/layout/list_layout_event.dart';
-import '../../models/layout/layout_model.dart';
-import '../../models/layout/tabs_view_model.dart';
-import '../../models/theme_model.dart';
-import '../../provider/theme_provider.dart';
+import 'layout_container_mixin.dart';
+import 'list_layout.dart';
+import 'list_layout_event.dart';
+import '../common/utils.dart';
+import 'package:flutter_app/models/layout_model.dart';
+import 'package:flutter_app/models/tabs_view_model.dart';
+import '../models/theme_model.dart';
+import '../provider/theme_provider.dart';
 
 class TabsView extends StatefulWidget {
 	final TabsViewModel model;
