@@ -6,11 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 
 import 'layout_container_mixin.dart';
-import 'list_layout.dart';
+import 'layout_interface.dart';
+import 'list_layout_interface.dart';
 import 'list_layout_event.dart';
 import '../common/utils.dart';
-import 'package:flutter_app/models/layout_model.dart';
-import 'package:flutter_app/models/tabs_view_model.dart';
+import '../models/layout_model.dart';
+import '../models/state_reference_model.dart';
+import '../models/tabs_view_model.dart';
 import '../models/theme_model.dart';
 import '../provider/theme_provider.dart';
 
@@ -24,17 +26,20 @@ class TabsView extends StatefulWidget {
 	State<StatefulWidget> createState() => TabsViewState();
 }
 
-class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin, LayoutContainerMixin implements ListLayout {
+class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin, LayoutContainerMixin implements ListLayoutInterface {
 	static final Logger logger = Logger("TabsViewState");
 	TabsViewModel _model;
 	int _index;
 	TabController _controller;
-	List<Map> _items;
+	List<StateReferenceModel> _items;
 
 	bool get isReachBottom {
 		bool isReachBottom = true;
-		if (this._items[this._index]["key"].currentState != null) {
-			isReachBottom = this._items[this._index]["key"].currentState.isReachBottom;
+		logger.info(this._items[this._index].key);
+		logger.info(this._items[this._index].key.currentState);
+		if (this._items[this._index].key.currentState != null) {
+			ListLayoutInterface listLayout = this._items[this._index].key.currentState as ListLayoutInterface;
+			isReachBottom = listLayout.isReachBottom;
 		}
 		return isReachBottom;
 	}
@@ -53,6 +58,10 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 			if (this._controller.indexIsChanging) {
 				this.setState(() {
 					this._index = this._controller.index;
+					if (widget.eventListener != null) {
+						Map<String, dynamic> params = {"isReachBottom": this.isReachBottom};
+						widget.eventListener(ListLayoutEvent.RESET, widget.key, params: params);
+					}
 				});
 			}
 		});
@@ -61,20 +70,37 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 
 	@override
 	Widget build(BuildContext context) {
-		Widget content = this._items[this._index]["widget"];
 		return SliverStickyHeader(
 			header: _Tabs(items: widget.model.items, controller: this._controller),
-			sliver: content
+			sliver: this._buildContent(context)
 		);
 	}
 
-	List<Map> _getItems() {
-		List<Map> items = [];
+	Widget _buildContent(BuildContext context) {
+		List<Widget> children = [];
+		for (int i = 0; i < this._items.length; i++) {
+			children.add(Offstage(
+				offstage: i != this._index,
+				child: this._items[i].widget,
+			));
+		}
+		return SliverToBoxAdapter(
+			child: Column(
+				children: children
+			)
+		);
+	}
+
+	List<StateReferenceModel> _getItems() {
+		List<StateReferenceModel> items = [];
 		for (TabViewModel item in this._model.items) {
 			GlobalKey<_ContentState> key = GlobalKey<_ContentState>();
 			logger.info(item.code);
-			Widget widget = _Content(code: item.code);
-			items.add({"key": key, "widget": widget});
+			Widget content = _Content(key: key, code: item.code, eventListener: this.onListEvent);
+			StateReferenceModel stateReferenceModel = StateReferenceModel();
+			stateReferenceModel.key = key;
+			stateReferenceModel.widget = content;
+			items.add(stateReferenceModel);
 		}
 		return items;
 	}
@@ -84,19 +110,28 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 			if (event == ListLayoutEvent.LOADED) {
 				widget.eventListener(ListLayoutEvent.LOADED, widget.key);
 			} else if (event == ListLayoutEvent.REACH_BOTTOM) {
-				this.onReachBottom();
+				this.onListReachBottom();
 			}
+		}
+	}
+
+	void onListReachBottom() {
+		if (widget.eventListener != null) {
+			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
 		}
 	}
 
 	@override
 	void onReachBottom() {
+		logger.info("isReachBottom: ${this.isReachBottom}");
 		if (this.isReachBottom) {
 			return;
 		}
-		for (Map item in this._items) {
-			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
-				item["key"].currentState.onReachBottom();
+		StateReferenceModel item = this._items[this._index];
+		if (item.key != null && item.key.currentState is ListLayoutInterface) {
+			ListLayoutInterface listLayout = item.key.currentState as ListLayoutInterface;
+			if (!listLayout.isReachBottom) {
+				listLayout.onReachBottom();
 				return;
 			}
 		}
@@ -104,6 +139,8 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
 		}
 	}
+
+	bool get isShow => this._model.isShow;
 
 	void show() {
 		this.setState(() => this._model.isShow = true);
@@ -161,40 +198,53 @@ class _Tabs extends StatelessWidget {
 
 class _Content extends StatefulWidget {
 	final String code;
+	final Function eventListener;
 
-	_Content({Key key, @required this.code}) : super(key: key);
+	_Content({Key key, @required this.code, this.eventListener}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => _ContentState();
 }
 
-class _ContentState extends State<_Content> with LayoutContainerMixin implements ListLayout {
+class _ContentState extends State<_Content> with LayoutContainerMixin implements ListLayoutInterface {
 	static final Logger logger = Logger("_ContentState");
 	LayoutModel _layoutModel;
-	List<Map> _items;
+	List<StateReferenceModel> _items;
 	bool _isReachBottom;
 
 	bool get isReachBottom => this._isReachBottom;
 
 	@override
 	void initState() {
-		logger.info(widget.code);
+		logger.info("${widget.code} init");
 		super.initState();
 		this._items = [];
 		this._isReachBottom = false;
 		this._getLayouts();
+		logger.info(widget.key);
+	}
+
+	@override
+	void dispose() {
+		logger.info("${widget.code} dispose");
+		super.dispose();
 	}
 
 	@override
 	Widget build(BuildContext context) {
 		List<Widget> list = [];
-		for (Map item in this._items) {
-			Widget widget = item["widget"];
-			if (widget.runtimeType != TabsView) {
-				list.add(widget);
+		for (StateReferenceModel item in this._items) {
+			if (item.widget.runtimeType != TabsView) {
+				list.add(item.widget);
 			}
 		}
-		return SliverList(delegate: SliverChildBuilderDelegate((BuildContext context, int index) => list[index], childCount: list.length));
+		return ListView.builder(
+			padding: EdgeInsets.all(0),
+			shrinkWrap: true,
+			physics: NeverScrollableScrollPhysics(),
+			itemBuilder: (BuildContext context, int index) => list[index],
+			itemCount: list.length
+		);
 	}
 
 	void _getLayouts() async {
@@ -204,7 +254,8 @@ class _ContentState extends State<_Content> with LayoutContainerMixin implements
 			}
 		});
 		LayoutModel layoutModel = await this.getLayouts(widget.code);
-		List<Map> items = [];
+		logger.info(layoutModel.toJson());
+		List<StateReferenceModel> items = [];
 		if (layoutModel != null) {
 			items = this.getLayoutWidgets(layoutModel.modules);
 		}
@@ -214,19 +265,66 @@ class _ContentState extends State<_Content> with LayoutContainerMixin implements
 		});
 	}
 
+	void onListEvent(int event, Key key) {
+		if (widget.eventListener != null) {
+			if (event == ListLayoutEvent.LOADED) {
+				widget.eventListener(event, widget.key);
+			} else if (event == ListLayoutEvent.REACH_BOTTOM) {
+				this.onListReachBottom();
+			}
+		}
+	}
+
+	void onListReachBottom() {
+		for (StateReferenceModel item in this._items) {
+			if (item.key != null && item.key.currentState != null) {
+				LayoutInterface layout = item.key.currentState as LayoutInterface;
+				if (!layout.isShow) {
+					layout.show();
+					if (item.key.currentState is ListLayoutInterface) {
+						return;
+					}
+				}
+			}
+		}
+		if (widget.eventListener != null) {
+			this._isReachBottom = true;
+			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
+		}
+	}
+
 	@override
 	void onReachBottom() {
+		logger.info("isReachBottom: ${this.isReachBottom}");
 		if (this.isReachBottom) {
 		  	return;
 		}
-		for (Map item in this._items) {
-			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
-				item["key"].currentState.onReachBottom();
-				return;
+		for (StateReferenceModel item in this._items) {
+			if (item.key != null && item.key.currentState is ListLayoutInterface) {
+				ListLayoutInterface listLayout = item.key.currentState as ListLayoutInterface;
+				if (!listLayout.isReachBottom) {
+					listLayout.onReachBottom();
+					return;
+				}
 			}
 		}
-//		if (widget.eventListener != null) {
-//			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
-//		}
+		if (widget.eventListener != null) {
+			this._isReachBottom = true;
+			widget.eventListener(ListLayoutEvent.REACH_BOTTOM, widget.key);
+		}
+	}
+
+	@override
+	void hide() {
+		// TODO: implement hide
+	}
+
+	@override
+	// TODO: implement isShow
+	bool get isShow => null;
+
+	@override
+	void show() {
+		// TODO: implement show
 	}
 }

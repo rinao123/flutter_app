@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:money/money.dart';
 
 class GoodsModel {
@@ -145,5 +147,10 @@ class GoodsModel {
 			"arrival_time": this.arrivalTime,
 			"is_distribution_suit": this.isDistributionSuit
 		};
+	}
+
+	@override
+	String toString() {
+		return json.encode(this.toJson());
 	}
 }

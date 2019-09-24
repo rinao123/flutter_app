@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'layout_behaviors_mixin.dart';
+import 'layout_interface.dart';
 import '../common/utils.dart';
-import 'package:flutter_app/models/img1_model.dart';
+import '../models/img1_model.dart';
 
 class Img1 extends StatefulWidget {
 	final Img1Model model;
@@ -14,7 +15,7 @@ class Img1 extends StatefulWidget {
 	State<StatefulWidget> createState() => Img1State();
 }
 
-class Img1State extends State<Img1> with LayoutBehaviorsMixin {
+class Img1State extends State<Img1> with LayoutBehaviorsMixin implements LayoutInterface {
 	Img1Model _model;
 
 	@override
@@ -60,10 +61,15 @@ class Img1State extends State<Img1> with LayoutBehaviorsMixin {
 		);
 	}
 
+	@override
+	bool get isShow => this._model.isShow;
+
+	@override
 	void show() {
 		this.setState(() => this._model.isShow = true);
 	}
 
+	@override
 	void hide() {
 		this.setState(() => this._model.isShow = false);
 	}

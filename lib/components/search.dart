@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import 'layout_interface.dart';
 import '../common/utils.dart';
-import 'package:flutter_app/models/search_model.dart';
+import '../models/search_model.dart';
 
 class Search extends StatefulWidget {
 	final SearchModel model;
 
-	Search({@required this.model});
+	Search({Key key, @required this.model}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => SearchState();
 }
 
-class SearchState extends State<Search> {
+class SearchState extends State<Search> implements LayoutInterface {
 	SearchModel _model;
 
 	@override
@@ -70,10 +71,15 @@ class SearchState extends State<Search> {
 		);
   	}
 
+  	@override
+	bool get isShow => this._model.isShow;
+
+	@override
 	void show() {
 		this.setState(() => this._model.isShow = true);
 	}
 
+	@override
 	void hide() {
 		this.setState(() => this._model.isShow = false);
 	}

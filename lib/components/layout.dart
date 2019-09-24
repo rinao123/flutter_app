@@ -4,11 +4,13 @@ import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 
 import "layout_container_mixin.dart";
-import "list_layout.dart";
+import 'layout_interface.dart';
+import "list_layout_interface.dart";
 import "list_layout_event.dart";
 import "tabs_view.dart";
 import "../common/utils.dart";
-import "package:flutter_app/models/layout_model.dart";
+import "../models/layout_model.dart";
+import '../models/state_reference_model.dart';
 
 import "package:logging/logging.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
@@ -25,20 +27,23 @@ class Layout extends StatefulWidget {
 class _LayoutState extends State<Layout> with LayoutContainerMixin {
 	static final Logger logger = Logger("_LayoutState");
 	LayoutModel _layoutModel;
-	List<Map> items;
+	List<StateReferenceModel> _items;
 	RefreshController _refreshController;
+	ScrollController _scrollController;
 
 	@override
 	void initState() {
 		super.initState();
 		this._refreshController = RefreshController();
-		this.items = [];
+		this._scrollController = ScrollController();
+		this._items = [];
 		this._getLayouts();
 	}
 
 	@override
 	void dispose() {
 		this._refreshController.dispose();
+		this._scrollController.dispose();
 		super.dispose();
 	}
 
@@ -55,6 +60,7 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 				enablePullUp: true,
 				controller: this._refreshController,
 				child: CustomScrollView(
+					controller: this._scrollController,
 					slivers: silvers
 				),
 				onRefresh: this._onRefresh,
@@ -91,15 +97,14 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 	List<Widget> _buildBody() {
 		List<Widget> body = [];
 		List<Widget> list = [];
-		for (Map item in this.items) {
-			Widget widget = item["widget"];
-			if (widget.runtimeType == TabsView) {
+		for (StateReferenceModel item in this._items) {
+			if (item.widget.runtimeType == TabsView) {
 				SliverList sliverList = this._getSliverList(list);
 				body.add(sliverList);
 				list = [];
-				body.add(widget);
+				body.add(item.widget);
 			} else {
-				list.add(widget);
+				list.add(item.widget);
 			}
 		}
 		if (list.length > 0) {
@@ -110,6 +115,7 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 	}
 
 	SliverList _getSliverList(List<Widget> list) {
+		logger.info(list);
 		SliverList sliverList = SliverList(
 			delegate: SliverChildBuilderDelegate(
 				(BuildContext context, int index) {
@@ -125,22 +131,72 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 		this._getLayouts();
 	}
 
-	void onListEvent(int event, Key key) {
+	void onListEvent(int event, Key key, {Map<String, dynamic> params}) {
 		if (event == ListLayoutEvent.LOADED) {
 			this._refreshController.loadComplete();
 		} else if (event == ListLayoutEvent.REACH_BOTTOM) {
-			this.onReachBottom();
+			this.onListReachBottom();
+		} else if (event == ListLayoutEvent.RESET) {
+			this.onTabsReset(key, params["isReachBottom"]);
+		}
+	}
+
+	void onListReachBottom() {
+		logger.info("onListReachBottom");
+		for (StateReferenceModel item in this._items) {
+			if (item.key != null && item.key.currentState != null) {
+				LayoutInterface layout = item.key.currentState as LayoutInterface;
+				logger.info(layout);
+				logger.info(layout.isShow);
+				if (!layout.isShow) {
+					layout.show();
+					if (item.key.currentState is ListLayoutInterface) {
+						return;
+					}
+				}
+			}
+		}
+		this._refreshController.loadNoData();
+	}
+
+	void onTabsReset(Key key, bool isReachBottom) {
+		logger.info("isReachBottom:$isReachBottom");
+		bool isShow = true;
+		for (StateReferenceModel item in this._items) {
+			if (item.key != null && item.key.currentState != null) {
+				LayoutInterface layout = item.key.currentState as LayoutInterface;
+				if (isShow) {
+					layout.show();
+				} else {
+					layout.hide();
+				}
+				if (item.key == key) {
+					isShow = !isReachBottom;
+				}
+				if (item.key.currentState is ListLayoutInterface) {
+					ListLayoutInterface listLayout = item.key.currentState as ListLayoutInterface;
+					isShow = listLayout.isReachBottom;
+				}
+			}
+		}
+		logger.info("isShow:$isShow");
+		if (isShow) {
+			this._refreshController.loadNoData();
+		} else {
+			this._refreshController.resetNoData();
 		}
 	}
 
 	void onReachBottom() {
-		for (Map item in this.items) {
-			if (item["key"] != null && item["key"].currentState is ListLayout && !item["key"].currentState.isReachBottom) {
-				item["key"].currentState.onReachBottom();
-				return;
+		for (StateReferenceModel item in this._items) {
+			if (item.key != null && item.key.currentState != null && item.key.currentState is ListLayoutInterface) {
+				ListLayoutInterface listLayout = item.key.currentState as ListLayoutInterface;
+				if ( !listLayout.isReachBottom) {
+					listLayout.onReachBottom();
+					return;
+				}
 			}
 		}
-		this._refreshController.loadNoData();
 	}
 
 	void _getLayouts() async {
@@ -150,14 +206,14 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 			}
 		});
 		LayoutModel layoutModel = await this.getLayouts(widget.code);
-		List<Map> items = [];
+		List<StateReferenceModel> items = [];
 		if (layoutModel != null) {
 			items = this.getLayoutWidgets(layoutModel.modules);
 		}
 		this._refreshController.refreshCompleted(resetFooterState: true);
 		this.setState(() {
 			this._layoutModel = layoutModel;
-			this.items = items;
+			this._items = items;
 		});
 	}
 }

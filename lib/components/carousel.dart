@@ -4,22 +4,22 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
 import 'layout_behaviors_mixin.dart';
+import 'layout_interface.dart';
 import '../common/utils.dart';
 import '../controllers/site_controller.dart';
 import '../models/advice_model.dart';
-import 'package:flutter_app/models/carousel_model.dart';
-
+import '../models/carousel_model.dart';
 
 class Carousel extends StatefulWidget {
 	final CarouselModel model;
 
-	Carousel({@required this.model});
+	Carousel({Key key, @required this.model}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => CarouselState();
 }
 
-class CarouselState extends State<Carousel> with LayoutBehaviorsMixin {
+class CarouselState extends State<Carousel> with LayoutBehaviorsMixin implements LayoutInterface {
 	CarouselModel _model;
 	List<AdviceModel> _advices;
 	int curIndex = 0;
@@ -111,10 +111,15 @@ class CarouselState extends State<Carousel> with LayoutBehaviorsMixin {
 		return items;
 	}
 
+	@override
+	bool get isShow => this._model.isShow;
+
+	@override
 	void show() {
 		this.setState(() => this._model.isShow = true);
 	}
 
+	@override
 	void hide() {
 		this.setState(() => this._model.isShow = false);
 	}

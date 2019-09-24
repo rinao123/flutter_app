@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+
 import 'package:logging/logging.dart';
 
 import 'carousel.dart';
@@ -8,15 +9,16 @@ import 'img1.dart';
 import 'search.dart';
 import 'tabs_view.dart';
 import '../controllers/site_controller.dart';
-import 'package:flutter_app/models/base_model.dart';
-import 'package:flutter_app/models/carousel_model.dart';
-import 'package:flutter_app/models/goods_list_model.dart';
-import 'package:flutter_app/models/icons_model.dart';
-import 'package:flutter_app/models/img1_model.dart';
-import 'package:flutter_app/models/layout_model.dart';
-import 'package:flutter_app/models/list_model.dart';
-import 'package:flutter_app/models/search_model.dart';
-import 'package:flutter_app/models/tabs_view_model.dart';
+import '../models/base_model.dart';
+import '../models/carousel_model.dart';
+import '../models/goods_list_model.dart';
+import '../models/icons_model.dart';
+import '../models/img1_model.dart';
+import '../models/layout_model.dart';
+import '../models/list_model.dart';
+import '../models/search_model.dart';
+import '../models/state_reference_model.dart';
+import '../models/tabs_view_model.dart';
 
 class LayoutContainerMixin {
 	static final Logger logger = Logger("LayoutContainerMixin");
@@ -36,10 +38,10 @@ class LayoutContainerMixin {
 		return layoutModel;
 	}
 
-	List<Map> getLayoutWidgets(List<BaseModel> models) {
-		List<Map> items = [];
+	List<StateReferenceModel> getLayoutWidgets(List<BaseModel> models) {
+		List<StateReferenceModel> items = [];
 		for (BaseModel model in models) {
-			Map item = this.getLayoutWidget(model);
+			StateReferenceModel item = this.getLayoutWidget(model);
 			if (item != null) {
 				items.add(item);
 			}
@@ -47,28 +49,41 @@ class LayoutContainerMixin {
 		return items;
 	}
 
-	Map getLayoutWidget(BaseModel model) {
+	StateReferenceModel getLayoutWidget(BaseModel model) {
+		StateReferenceModel stateReferenceModel = StateReferenceModel();
 		switch (model.runtimeType) {
 			case CarouselModel:
 				GlobalKey<CarouselState> key = GlobalKey<CarouselState>();
-				return {"key": key, "widget": Carousel(model: model)};
+				stateReferenceModel.key = key;
+				stateReferenceModel.widget = Carousel(key: key, model: model);
+				return stateReferenceModel;
 			case Img1Model:
 				GlobalKey<Img1State> key = GlobalKey<Img1State>();
-				return {"key": key, "widget": Img1(key: key, model: model)};
+				stateReferenceModel.key = key;
+				stateReferenceModel.widget = Img1(key: key, model: model);
+				return stateReferenceModel;
 			case IconsModel:
 				GlobalKey<IconsState> key = GlobalKey<IconsState>();
-				return {"key": key, "widget": Icons(model: model)};
+				stateReferenceModel.key = key;
+				stateReferenceModel.widget = Icons(key: key, model: model);
+				return stateReferenceModel;
 			case GoodsListModel:
-				GlobalKey<GoodsListState> key = GlobalKey<GoodsListState>();
 				GoodsListModel goodsListModel = model as GoodsListModel;
 				goodsListModel.isLoadingControlByPage = true;
-				return {"key": key, "widget": GoodsList(key: key, model: model, eventListener: this.onListEvent)};
+				GlobalKey<GoodsListState> key = GlobalKey<GoodsListState>();
+				stateReferenceModel.key = key;
+				stateReferenceModel.widget = GoodsList(key: key, model: model, eventListener: this.onListEvent);
+				return stateReferenceModel;
 			case SearchModel:
 				GlobalKey<SearchState> key = GlobalKey<SearchState>();
-				return {"key": key, "widget": Search(model: model)};
+				stateReferenceModel.key = key;
+				stateReferenceModel.widget = Search(key: key, model: model);
+				return stateReferenceModel;
 			case TabsViewModel:
 				GlobalKey<TabsViewState> key = GlobalKey<TabsViewState>();
-				return {"key": key, "widget": TabsView(key: key, model: model, eventListener: this.onListEvent)};
+				stateReferenceModel.key = key;
+				stateReferenceModel.widget = TabsView(key: key, model: model, eventListener: this.onListEvent);
+				return stateReferenceModel;
 			default:
 				logger.warning("getLayoutWidget unknown module");
 				return null;

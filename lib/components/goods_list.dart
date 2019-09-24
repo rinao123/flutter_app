@@ -4,7 +4,7 @@ import 'package:logging/logging.dart';
 
 import 'base_goods_list.dart';
 import 'layout_behaviors_mixin.dart';
-import 'list_layout.dart';
+import 'list_layout_interface.dart';
 import 'list_layout_event.dart';
 import '../common/utils.dart';
 import '../controllers/goods_controller.dart';
@@ -22,7 +22,7 @@ class GoodsList extends StatefulWidget {
 	State<StatefulWidget> createState() => GoodsListState();
 }
 
-class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implements ListLayout {
+class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implements ListLayoutInterface {
 	static final Logger logger = Logger("GoodsListState");
 	GoodsListModel _model;
 	int _page;
@@ -30,8 +30,6 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 	bool _isShowLoading;
 	bool _isReachBottom;
 	bool _isGoodsListReachBottom;
-
-	bool get isReachBottom => this._isReachBottom;
 
 	@override
 	void initState() {
@@ -84,6 +82,7 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 
 	void _getGoodsList(int page) async {
 		List<GoodsModel> goodsList = await GoodsController.getGoodsList(this._model.src, page, this._model.pageSize);
+		logger.info(goodsList);
 		if (goodsList == null) {
 			return;
 		}
@@ -110,17 +109,26 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 	}
 
 	@override
+	bool get isReachBottom => this._isReachBottom;
+
+	@override
 	void onReachBottom() {
+		logger.info("onReachBottom");
 		if (this._isGoodsListReachBottom) {
 			return;
 		}
 		this._getGoodsList(this._page);
 	}
 
+	@override
+	bool get isShow => this._model.isShow;
+
+	@override
 	void show() {
 		this.setState(() => this._model.isShow = true);
 	}
 
+	@override
 	void hide() {
 		this.setState(() => this._model.isShow = false);
 	}

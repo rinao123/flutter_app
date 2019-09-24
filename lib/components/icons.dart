@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'layout_behaviors_mixin.dart';
+import 'layout_interface.dart';
 import '../common/utils.dart';
-import 'package:flutter_app/models/icons_model.dart';
+import '../models/icons_model.dart';
 
 class Icons extends StatefulWidget {
 	final IconsModel model;
 
-	Icons({@required this.model});
+	Icons({Key key, @required this.model}) : super(key: key);
 
 	@override
 	State<StatefulWidget> createState() => IconsState();
 }
 
-class IconsState extends State<Icons> with LayoutBehaviorsMixin {
+class IconsState extends State<Icons> with LayoutBehaviorsMixin implements LayoutInterface {
 	IconsModel _model;
 
 	@override
@@ -91,10 +92,15 @@ class IconsState extends State<Icons> with LayoutBehaviorsMixin {
 		);
 	}
 
+	@override
+	bool get isShow => this._model.isShow;
+
+	@override
 	void show() {
 		this.setState(() => this._model.isShow = true);
 	}
 
+	@override
 	void hide() {
 		this.setState(() => this._model.isShow = false);
 	}
