@@ -171,6 +171,13 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 					layout.hide();
 				}
 				if (item.key == key) {
+					RenderObject renderObject = item.key.currentContext.findRenderObject();
+					RenderAbstractViewport viewport = RenderAbstractViewport.of(renderObject);
+					RevealedOffset revealedOffset = viewport.getOffsetToReveal(renderObject, 0.0);
+					double offset = revealedOffset.offset;
+					if (this._scrollController.offset > offset) {
+						this._scrollController.jumpTo(offset);
+					}
 					isShow = !isReachBottom;
 				}
 				if (item.key.currentState is ListLayoutInterface) {
