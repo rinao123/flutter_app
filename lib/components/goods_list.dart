@@ -125,11 +125,17 @@ class GoodsListState extends State<GoodsList> with LayoutBehaviorsMixin implemen
 
 	@override
 	void show() {
+		if (this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = true);
 	}
 
 	@override
 	void hide() {
+		if (!this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = false);
 	}
 }

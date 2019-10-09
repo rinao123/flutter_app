@@ -1,7 +1,11 @@
+import 'package:flutter_app/models/placeholder_model.dart';
 import 'package:logging/logging.dart';
 
+import 'buoy_model.dart';
 import 'goods_list_model.dart';
 import 'icons_model.dart';
+import 'notice_model.dart';
+import 'rich_text_model.dart';
 import 'share_info_model.dart';
 import 'base_model.dart';
 import 'img1_model.dart';
@@ -77,6 +81,14 @@ class LayoutModel {
 				return SearchModel.fromJson(item);
 			case "tabs_view":
 				return TabsViewModel.fromJson(item);
+			case "rich_text":
+				return RichTextModel.fromJson(item);
+			case "notice":
+				return NoticeModel.fromJson(item);
+			case "buoy":
+				return BuoyModel.fromJson(item);
+			case "placeholder":
+				return PlaceholderModel.fromJson(item);
 			default:
 				logger.warning("getModule unknown module");
 				return null;

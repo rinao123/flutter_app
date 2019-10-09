@@ -97,11 +97,17 @@ class IconsState extends State<Icons> with LayoutBehaviorsMixin implements Layou
 
 	@override
 	void show() {
+		if (this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = true);
 	}
 
 	@override
 	void hide() {
+		if (!this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = false);
 	}
 }

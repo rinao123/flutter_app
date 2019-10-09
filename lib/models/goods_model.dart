@@ -9,6 +9,7 @@ class GoodsModel {
 	String _introduction;
 	String _picture;
 	String _banner;
+	List<String> _imgArray;
 	Money _price;
 	Money _promotionPrice;
 	int _state;
@@ -17,12 +18,36 @@ class GoodsModel {
 	Money _pintuanPrice;
 	int _sales;
 	int _shares;
-	Money _commission;
 	int _promotionState;
 	int _positiveRating;
 	bool _isPresell;
 	int _arrivalTime;
 	bool _isDistributionSuit;
+	String _description;
+
+	GoodsModel() {
+		this.id = 0;
+		this.name = "";
+		this.subTitle = "";
+		this.introduction = "";
+		this.picture = "";
+		this.banner = "";
+		this.imgArray = [];
+		this.price = Money.fromDouble(0, Currency("CNY"));
+		this.promotionPrice = Money.fromDouble(0, Currency("CNY"));
+		this.state = 0;
+		this.stock = 0;
+		this.pintuanNum = 0;
+		this.pintuanPrice = Money.fromDouble(0, Currency("CNY"));
+		this.sales = 0;
+		this.shares = 0;
+		this.promotionState = 0;
+		this.positiveRating = 0;
+		this.isPresell = false;
+		this.arrivalTime = 0;
+		this.isDistributionSuit = false;
+		this.description = "";
+	}
 
 	int get id => this._id;
 	set id(int id) => this._id = id;
@@ -41,6 +66,9 @@ class GoodsModel {
 
 	String get banner => this._banner;
 	set banner(String banner) => this._banner = banner;
+
+	List<String> get imgArray => this._imgArray;
+	set imgArray(List<String> imgArray) => this._imgArray = imgArray;
 
 	Money get price => this._price;
 	set price(Money price) => this._price = price;
@@ -66,9 +94,6 @@ class GoodsModel {
 	int get shares => this._shares;
 	set shares(int shares) => this._shares = shares;
 
-	Money get commission => this._commission;
-	set commission(Money commission) => this._commission = commission;
-
 	int get promotionState => this._promotionState;
 	set promotionState(int promotionState) => this._promotionState = promotionState;
 
@@ -84,6 +109,9 @@ class GoodsModel {
 	bool get isDistributionSuit => this._isDistributionSuit;
 	set isDistributionSuit(bool isDistributionSuit) => this._isDistributionSuit = isDistributionSuit;
 
+	String get description => this._description;
+	set description(String description) => this._description = description;
+
 	static GoodsModel fromJson(Map<String, dynamic> json) {
 		GoodsModel goodsModel = GoodsModel();
 		goodsModel.id = json["id"];
@@ -92,6 +120,13 @@ class GoodsModel {
 		goodsModel.introduction = json["introduction"];
 		goodsModel.picture = json["picture"];
 		goodsModel.banner = json["banner"];
+		if (json.containsKey("img_array")) {
+			List<String> imgArray = [];
+			if (json["img_array"].isNotEmpty) {
+				imgArray = json["img_array"].split(",");
+			}
+			goodsModel.imgArray = imgArray;
+		}
 		if (json["price"] is int) {
 			json["price"] = json["price"].toDouble();
 		}
@@ -112,7 +147,6 @@ class GoodsModel {
 		if (json["commission"] is int) {
 			json["commission"] = json["commission"].toDouble();
 		}
-		goodsModel.commission = Money.fromDouble(json["commission"], Currency("CNY"));
 		goodsModel.promotionState = json["promotion_state"];
 		goodsModel.positiveRating = json["positive_rating"];
 		goodsModel.isPresell = json["is_presell"];
@@ -121,6 +155,7 @@ class GoodsModel {
 			json["is_distribution_suit"] = json["is_distribution_suit"] > 0;
 		}
 		goodsModel.isDistributionSuit = json["is_distribution_suit"];
+		goodsModel.description = json["description"];
 		return goodsModel;
 	}
 
@@ -132,6 +167,7 @@ class GoodsModel {
 			"introduction": this.introduction,
 			"picture": this.picture,
 			"banner": this.banner,
+			"img_array": this.imgArray,
 			"price": double.parse(this.price.amountAsString),
 			"promotion_price": double.parse(this.promotionPrice.amountAsString),
 			"state": this.state,
@@ -140,7 +176,6 @@ class GoodsModel {
 			"pintuan_price": double.parse(this.pintuanPrice.amountAsString),
 			"sales": this.sales,
 			"shares": this.shares,
-			"commission": double.parse(this.commission.amountAsString),
 			"promotion_state": this.promotionState,
 			"positive_rating": this.positiveRating,
 			"is_presell": this.isPresell,

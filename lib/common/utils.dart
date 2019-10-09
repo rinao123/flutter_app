@@ -1,5 +1,6 @@
 import "dart:io";
 import "dart:ui";
+import 'package:flutter/material.dart';
 import "package:flutter/widgets.dart";
 import "package:device_info/device_info.dart";
 import "package:shared_preferences/shared_preferences.dart";
@@ -29,7 +30,9 @@ class Utils {
     }
 
     static Color getColorFromString(String str) {
-        if (str.contains("#")) {
+        if (str.isEmpty) {
+            return Colors.transparent;
+        } else if (str.contains("#")) {
             return getColorFromHex(str);
         } else {
             return getColorFromRGBA(str);

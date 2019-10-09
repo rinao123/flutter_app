@@ -76,11 +76,17 @@ class SearchState extends State<Search> implements LayoutInterface {
 
 	@override
 	void show() {
+		if (this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = true);
 	}
 
 	@override
 	void hide() {
+		if (!this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = false);
 	}
 }

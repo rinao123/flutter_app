@@ -18,10 +18,10 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 
 	@override
 	Widget build(BuildContext context) {
-		int numPerLine = this._getNumPerLine(0);
+		int numPerLine = this._getNumPerLine(1);
 		List<Widget> items = this._buildItems(context);
 		return Container(
-			margin: EdgeInsets.symmetric(horizontal: Utils.px2dp(this._baseGoodsListModel.pageMargin)),
+			margin: EdgeInsets.symmetric(horizontal: Utils.px2dp(this._baseGoodsListModel.pageMargin), vertical: Utils.px2dp(this._baseGoodsListModel.goodsMargin / 2)),
 			child: StaggeredGridView.countBuilder(
 				shrinkWrap: true,
 				physics: NeverScrollableScrollPhysics(),
@@ -30,8 +30,16 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 				itemBuilder: (BuildContext context, int index) {
 					return items[index];
 				},
-				staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-				padding: EdgeInsets.all(0)
+				staggeredTileBuilder: (int index) {
+					int crossAxisCellCount = 1;
+					if (this._baseGoodsListModel.type == 5 && index % 3 == 0) {
+						crossAxisCellCount = 2;
+					}
+					return StaggeredTile.fit(crossAxisCellCount);
+				},
+				padding: EdgeInsets.all(0),
+				mainAxisSpacing: Utils.px2dp(this._baseGoodsListModel.goodsMargin),
+				crossAxisSpacing: Utils.px2dp(this._baseGoodsListModel.goodsMargin)
 			)
 		);
 	}
@@ -48,56 +56,85 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 	Widget _buildItem(BuildContext context, int index) {
 		GoodsModel goods = this._baseGoodsListModel.goodsList[index];
 		double width = this._getItemWidth(index);
-		double marginVertical = this._baseGoodsListModel.goodsMargin / 2;
-		int numPerLine = this._getNumPerLine(index);
-		int marginRight = 0;
-		if (this._baseGoodsListModel.type == 5) {
-			if (index % 3 == 1) {
-				marginRight = this._baseGoodsListModel.goodsMargin;
-			}
-		} else {
-			if (index % numPerLine < numPerLine - 1) {
-				marginRight = this._baseGoodsListModel.goodsMargin;
-			}
-		}
-		Color backgroundColor = this._baseGoodsListModel.goodsStyle == 4 ? Colors.transparent : Utils.getColorFromString("#ffffff");
+		Color backgroundColor = Utils.getColorFromString("#ffffff");
 		List<BoxShadow> shadow = [];
-		if (this._baseGoodsListModel.goodsStyle == 4) {
+		Border border;
+		BorderRadius borderRadius = BorderRadius.circular(Utils.px2dp(this._baseGoodsListModel.borderRadius));
+		if (this._baseGoodsListModel.goodsStyle == 2) {
 			shadow = [
-				BoxShadow(offset: Offset(0, Utils.px2dp(8)), blurRadius: Utils.px2dp(16), spreadRadius: 0, color: Utils.getColorFromString("rgba(0,0,0,0.8)"))
+				BoxShadow(offset: Offset(0, Utils.px2dp(8)), blurRadius: Utils.px2dp(16), spreadRadius: 0, color: Utils.getColorFromString("rgba(0,0,0,0.08)"))
 			];
+		} else if (this._baseGoodsListModel.goodsStyle == 3) {
+			border = Border.all(color: Utils.getColorFromString("#dfdfdf"));
+		} else if (this._baseGoodsListModel.goodsStyle == 4) {
+			backgroundColor = Colors.transparent;
 		}
-		List<Widget> items = [];
-		items.add(this._buildPictureContainer(index));
+		Widget picture = this._buildPictureContainer(index);
+		Widget goodsName;
+		Widget subTitle;
+		Widget bottom = this._buildBottom(context, index);
 		if (this._baseGoodsListModel.isShowGoodsName) {
-			items.add(this._buildGoodsName(context, index));
+			goodsName = this._buildGoodsName(context, index);
 		}
-		if (this._baseGoodsListModel.isShowGoodsName) {
-			items.add(this._buildSubTile(context, index));
+		if (this._baseGoodsListModel.isShowSubTitle) {
+			subTitle = this._buildSubTile(context, index);
 		}
-		items.add(this._buildBottom(context, index));
+		Widget child;
+		if (this._baseGoodsListModel.type == 4) {
+			List<Widget> children = [];
+			if (goodsName != null) {
+				children.add(goodsName);
+			}
+			if (subTitle != null) {
+				children.add(subTitle);
+			}
+			child = Row(
+				children: <Widget>[
+					picture,
+					Expanded(
+						child: Container(
+							margin: EdgeInsets.symmetric(horizontal: Utils.px2dp(10)),
+							height: Utils.px2dp(290),
+							child: Column(
+								mainAxisAlignment: MainAxisAlignment.spaceBetween,
+								children: <Widget>[
+									Column(children: children),
+									bottom
+								]
+							)
+						)
+					)
+				]
+			);
+		} else {
+			List<Widget> children = [];
+			children.add(picture);
+			if (goodsName != null) {
+				children.add(goodsName);
+			}
+			if (subTitle != null) {
+				children.add(subTitle);
+			}
+			children.add(bottom);
+			child = Column(children: children);
+		}
 		return Container(
-			margin: EdgeInsets.only(top: Utils.px2dp(marginVertical), bottom: Utils.px2dp(marginVertical), right: Utils.px2dp(marginRight)),
 			width: Utils.px2dp(width),
 			decoration: BoxDecoration(
 				color: backgroundColor,
-				borderRadius: BorderRadius.circular(Utils.px2dp(this._baseGoodsListModel.borderRadius)),
+				borderRadius: borderRadius,
+				border: border,
 				boxShadow: shadow
 			),
 			child: GestureDetector(
-				child: Column(
-					children: items
-				),
+				child: child,
 				onTap: () => this.onTap(context, link: "/pages/goods_detail/goods_detail?id=${goods.id}")
 			)
 		);
 	}
 
 	Widget _buildPictureContainer(int index) {
-		double width = this._getItemWidth(index);
 		return Container(
-			width: Utils.px2dp(width),
-			height: Utils.px2dp(width),
 			child: Stack(
 				children: <Widget>[
 					this._buildPicture(index)
@@ -107,21 +144,22 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 	}
 
 	Widget _buildPicture(int index) {
-		double width = this._getItemWidth(index);
+		double width = this._baseGoodsListModel.type == 4 ? 290 : this._getItemWidth(index);
+		double height = this._baseGoodsListModel.type == 8 ? null : Utils.px2dp(width);
+		BorderRadius borderRadius;
+		if (this._baseGoodsListModel.type == 4) {
+			borderRadius = BorderRadius.horizontal(left: Radius.circular(Utils.px2dp(this._baseGoodsListModel.borderRadius)));
+		} else {
+			borderRadius = BorderRadius.vertical(top: Radius.circular(Utils.px2dp(this._baseGoodsListModel.borderRadius)));
+		}
 		GoodsModel goods = this._baseGoodsListModel.goodsList[index];
-		return Positioned(
-			top: 0,
-			left: 0,
-			child: Container(
-				child: ClipRRect(
-					borderRadius: BorderRadius.vertical(top: Radius.circular(Utils.px2dp(this._baseGoodsListModel.borderRadius))),
-					child: Image.network(
-						goods.picture,
-						width: Utils.px2dp(width),
-						height: Utils.px2dp(width),
-						fit: BoxFit.contain
-					)
-				)
+		return ClipRRect(
+			borderRadius: borderRadius,
+			child: Image.network(
+				goods.picture,
+				width: Utils.px2dp(width),
+				height: height,
+				fit: BoxFit.cover
 			)
 		);
 	}
@@ -167,15 +205,23 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 	}
 
 	Widget _buildBottom(BuildContext context, int index) {
-		double width = this._getItemWidth(index);
+		EdgeInsetsGeometry margin;
+		double width;
+		if (this._baseGoodsListModel.type == 7) {
+			margin = EdgeInsets.only(top: Utils.px2dp(10), left: Utils.px2dp(16));
+			width = Utils.px2dp(this._getItemWidth(index) - 16);
+		} else {
+			margin = EdgeInsets.symmetric(vertical: Utils.px2dp(10));
+			width = Utils.px2dp(this._getItemWidth(index) - 32);
+		}
 		List<Widget> items = [];
 		items.add(this._buildPrice(context, index));
 		if (this._baseGoodsListModel.btn > 0) {
 			items.add(this._buildBuyBtn(context, index));
 		}
 		return Container(
-			margin: EdgeInsets.symmetric(vertical: Utils.px2dp(10)),
-			width: Utils.px2dp(width - 32),
+			margin: margin,
+			width: width,
 			child: Row(
 				mainAxisAlignment: MainAxisAlignment.spaceBetween,
 				crossAxisAlignment: CrossAxisAlignment.center,
@@ -211,8 +257,33 @@ class BaseGoodsList extends StatelessWidget with LayoutBehaviorsMixin {
 	}
 
 	Widget _buildBuyBtn(BuildContext context, int index) {
-		ThemeModel themeModel = Provider.of<ThemeProvider>(context).getThemeModel();
-		return Icon(IconData(0xe644, fontFamily: "iconfont"), color: Utils.getColorFromString(themeModel.mainColor), size: Utils.px2dp(44));
+		if (this._baseGoodsListModel.type == 7) {
+			return this._buildBuyBtnType7(context, index);
+		} else {
+			ThemeModel themeModel = Provider.of<ThemeProvider>(context).getThemeModel();
+			return Icon(IconData(0xe644, fontFamily: "iconfont"), color: Utils.getColorFromString(themeModel.mainColor), size: Utils.px2dp(44));
+		}
+	}
+
+	Widget _buildBuyBtnType7(BuildContext context, int index) {
+		return Container(
+			width: Utils.px2dp(192),
+			height: Utils.px2dp(76),
+			decoration: BoxDecoration(
+				color: Utils.getColorFromString("#ff0100"),
+				borderRadius: BorderRadius.only(bottomRight: Radius.circular(Utils.px2dp(this._baseGoodsListModel.borderRadius)))
+			),
+			child: Center(
+				child: Text(
+					"我要抢购",
+					style: TextStyle(
+						fontSize: Utils.px2dp(28),
+						color: Utils.getColorFromString("#ffffff"),
+						fontWeight: FontWeight.bold
+					)
+				)
+			)
+		);
 	}
 
 	double _getItemWidth(int index) {

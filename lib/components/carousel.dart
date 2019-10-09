@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:logging/logging.dart';
 
 import 'layout_behaviors_mixin.dart';
 import 'layout_interface.dart';
@@ -20,6 +21,7 @@ class Carousel extends StatefulWidget {
 }
 
 class CarouselState extends State<Carousel> with LayoutBehaviorsMixin implements LayoutInterface {
+	static final Logger logger = Logger("CarouselState");
 	CarouselModel _model;
 	List<AdviceModel> _advices;
 	int curIndex = 0;
@@ -43,6 +45,7 @@ class CarouselState extends State<Carousel> with LayoutBehaviorsMixin implements
 				)
 			);
 		}
+
 		return Offstage(
 			offstage: !this._model.isShow,
 			child: Container(
@@ -116,16 +119,23 @@ class CarouselState extends State<Carousel> with LayoutBehaviorsMixin implements
 
 	@override
 	void show() {
+		if (this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = true);
 	}
 
 	@override
 	void hide() {
+		if (!this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = false);
 	}
 
 	void getAdList() async {
 		List<AdviceModel> advices = await SiteController.getAdList(this._model.code);
+		logger.info(advices);
 		if (advices == null) {
 			return;
 		}

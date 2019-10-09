@@ -29,9 +29,9 @@ class TabsView extends StatefulWidget {
 class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin, LayoutContainerMixin implements ListLayoutInterface {
 	static final Logger logger = Logger("TabsViewState");
 	TabsViewModel _model;
-	int _index;
 	TabController _controller;
 	List<StateReferenceModel> _items;
+	int _index;
 
 	bool get isReachBottom {
 		bool isReachBottom = true;
@@ -49,23 +49,25 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 		logger.info("TabsView initState");
 		super.initState();
 		this._model = widget.model;
-		this._index = 0;
 		this._controller = TabController(
 			length: this._model.items.length,
 			vsync: this
 		);
 		this._controller.addListener(() {
 			if (this._controller.indexIsChanging) {
-				this.setState(() {
-					this._index = this._controller.index;
-					if (widget.eventListener != null) {
-						Map<String, dynamic> params = {"isReachBottom": this.isReachBottom};
-						widget.eventListener(ListLayoutEvent.RESET, widget.key, params: params);
-					}
+				Future.delayed(Duration(milliseconds: 100), () {
+					this.setState(() {
+						this._index = this._controller.index;
+						if (widget.eventListener != null) {
+							Map<String, dynamic> params = {"isReachBottom": this.isReachBottom};
+							widget.eventListener(ListLayoutEvent.RESET, widget.key, params: params);
+						}
+					});
 				});
 			}
 		});
 		this._items = this._getItems();
+		this._index = 0;
 	}
 
 	@override
@@ -143,10 +145,16 @@ class TabsViewState extends State<TabsView> with SingleTickerProviderStateMixin,
 	bool get isShow => this._model.isShow;
 
 	void show() {
+		if (this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = true);
 	}
 
 	void hide() {
+		if (!this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = false);
 	}
 }
@@ -163,7 +171,6 @@ class _Tabs extends StatelessWidget {
 		}
 		ThemeModel themeModel = Provider.of<ThemeProvider>(context).getThemeModel();
 		return Container(
-			width: Utils.px2dp(Utils.DESIGN_WIDTH),
 			height: Utils.px2dp(60),
 			decoration: BoxDecoration(
 				color: Utils.getColorFromString("#ffffff"),

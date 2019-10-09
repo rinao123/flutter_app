@@ -62,6 +62,6 @@ class _LoginState extends State<Login> {
     }
 
     void _goToHome() {
-        NavigationHelper.redirect(this.context, "/pages/home/home");
+        NavigationHelper.redirectTo(this.context, "/pages/home/home");
     }
 }

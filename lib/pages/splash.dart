@@ -56,10 +56,10 @@ class _SplashState extends State<Splash> {
     }
 
     void _goToLogin() {
-        NavigationHelper.redirect(context, "/pages/login/login");
+        NavigationHelper.redirectTo(context, "/pages/login/login");
     }
 
     void _goToHome() {
-        NavigationHelper.redirect(context, "/pages/home/home");
+        NavigationHelper.redirectTo(context, "/pages/home/home");
     }
 }

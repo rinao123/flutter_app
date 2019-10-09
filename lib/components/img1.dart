@@ -38,7 +38,7 @@ class Img1State extends State<Img1> with LayoutBehaviorsMixin implements LayoutI
 			child: Container(
 				color: Utils.getColorFromString("#ffffff"),
 				margin: EdgeInsets.symmetric(vertical: margin),
-				child: InkWell (
+				child: GestureDetector(
 					child: Container(
 						decoration: BoxDecoration(
 							boxShadow: boxShadow
@@ -66,11 +66,17 @@ class Img1State extends State<Img1> with LayoutBehaviorsMixin implements LayoutI
 
 	@override
 	void show() {
+		if (this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = true);
 	}
 
 	@override
 	void hide() {
+		if (!this.isShow) {
+			return;
+		}
 		this.setState(() => this._model.isShow = false);
 	}
 }

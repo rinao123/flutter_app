@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:logging/logging.dart';
 
 class AdviceModel {
@@ -76,5 +78,10 @@ class AdviceModel {
 		} else {
 			return originLink;
 		}
+	}
+
+	@override
+	String toString() {
+		return json.encode(this.toJson());
 	}
 }

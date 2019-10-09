@@ -3,6 +3,8 @@ import "package:flutter/rendering.dart";
 import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 
+import 'buoy.dart';
+import 'goods_list.dart';
 import "layout_container_mixin.dart";
 import 'layout_interface.dart';
 import "list_layout_interface.dart";
@@ -11,8 +13,11 @@ import "tabs_view.dart";
 import "../common/utils.dart";
 import "../models/layout_model.dart";
 import '../models/state_reference_model.dart';
+import '../models/theme_model.dart';
+import '../provider/theme_provider.dart';
 
 import "package:logging/logging.dart";
+import 'package:provider/provider.dart';
 import "package:pull_to_refresh/pull_to_refresh.dart";
 
 class Layout extends StatefulWidget {
@@ -50,28 +55,36 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 	@override
 	Widget build(BuildContext context) {
 		List<Widget> silvers = [];
-		Widget header = this._buildHeader();
+		Widget header = this._buildHeader(context);
 		silvers.add(header);
-		List<Widget> items = this._buildBody();
+		List<Widget> items = this._buildBody(context);
 		silvers.addAll(items);
+		List<Widget> children = [];
+		Widget body = SmartRefresher(
+			enablePullDown: true,
+			enablePullUp: true,
+			controller: this._refreshController,
+			child: CustomScrollView(
+				controller: this._scrollController,
+				slivers: silvers
+			),
+			onRefresh: this._onRefresh,
+			onLoading: this.onReachBottom,
+		);
+		children.add(body);
+		Widget buoy = this._buildBuoy();
+		if (buoy != null) {
+			children.add(buoy);
+		}
 		return Scaffold(
-			body: SmartRefresher(
-				enablePullDown: true,
-				enablePullUp: true,
-				controller: this._refreshController,
-				child: CustomScrollView(
-					controller: this._scrollController,
-					slivers: silvers
-				),
-				onRefresh: this._onRefresh,
-				onLoading: this.onReachBottom,
-			)
+			body: Stack(children: children)
 		);
 	}
 
-	Widget _buildHeader() {
-		String backgroundColor = this._layoutModel == null ? "#ffffff" : this._layoutModel.backgroundColor;
-		String titleColor = this._layoutModel == null ? "#000000" : this._layoutModel.frontColor;
+	Widget _buildHeader(BuildContext context) {
+		ThemeModel themeModel = Provider.of<ThemeProvider>(context).getThemeModel();
+		String backgroundColor = this._layoutModel == null ? themeModel.mainColor : this._layoutModel.backgroundColor;
+		String titleColor = this._layoutModel == null ? "#ffffff" : this._layoutModel.frontColor;
 		String title = this._layoutModel == null ? "" : this._layoutModel.title;
 		return SliverAppBar(
 			elevation: 0,
@@ -94,7 +107,7 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 		);
 	}
 
-	List<Widget> _buildBody() {
+	List<Widget> _buildBody(BuildContext context) {
 		List<Widget> body = [];
 		List<Widget> list = [];
 		for (StateReferenceModel item in this._items) {
@@ -103,7 +116,7 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 				body.add(sliverList);
 				list = [];
 				body.add(item.widget);
-			} else {
+			} else if (item.widget.runtimeType != Buoy) {
 				list.add(item.widget);
 			}
 		}
@@ -125,6 +138,15 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 			)
 		);
 		return sliverList;
+	}
+
+	Widget _buildBuoy() {
+		for (StateReferenceModel item in this._items) {
+			if (item.widget.runtimeType == Buoy) {
+				return item.widget;
+			}
+		}
+		return null;
 	}
 
 	Future<void> _onRefresh() async {
@@ -165,7 +187,7 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 		for (StateReferenceModel item in this._items) {
 			if (item.key != null && item.key.currentState != null) {
 				LayoutInterface layout = item.key.currentState as LayoutInterface;
-				if (isShow) {
+				if (isShow || item.key.currentState is BuoyState) {
 					layout.show();
 				} else {
 					layout.hide();
@@ -218,6 +240,16 @@ class _LayoutState extends State<Layout> with LayoutContainerMixin {
 			items = this.getLayoutWidgets(layoutModel.modules);
 		}
 		this._refreshController.refreshCompleted(resetFooterState: true);
+		bool hasList = false;
+		for (StateReferenceModel item in items) {
+			if (item.widget.runtimeType == GoodsList || item.widget.runtimeType == TabsView) {
+				hasList = true;
+				break;
+			}
+		}
+		if (!hasList) {
+			this._refreshController.loadNoData();
+		}
 		this.setState(() {
 			this._layoutModel = layoutModel;
 			this._items = items;

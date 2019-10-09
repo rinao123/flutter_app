@@ -65,7 +65,7 @@ class NavigationHelper {
         ));
     }
 
-    static void redirect(BuildContext context, String url) {
+    static void redirectTo(BuildContext context, String url) {
         String path = getPath(url);
         Map<String, String> params = getParams(url);
         var page = getPage(path, params: params);
